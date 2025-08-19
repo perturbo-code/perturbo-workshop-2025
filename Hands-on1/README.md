@@ -1,7 +1,7 @@
 # Docker containers: General information and usage for Perturbo
 
 Installing Perturbo can be complicated due to the fact that it depends on other packages, such as Quantum Espresso, HDF5, LAPACK, etc.
-Therefore, there are 2 scenarios for installing our package - from scratch and using containers. During the workshop you will use the second method, so now we will take a closer look at it, as well as discuss the testing procedure for Perturbo. For the installation from scratch, please check the [slides](https://www.docker.com)
+Therefore, there are 2 scenarios for installing our package - from scratch and using containers. During the workshop you will use the second method, so now we will take a closer look at it, as well as discuss the testing procedure for Perturbo. For the installation from scratch, please check the [slides](https://github.com/perturbo-code/perturbo-workshop-2025/blob/main/Hands-on1/slides_download_installation.pdf)
 
 ## Usage of containers
 
