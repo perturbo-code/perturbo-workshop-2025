@@ -185,11 +185,16 @@ It's expected to obtain something like that:
    perturbo/perturbo   gcc_openmp_3.0         b68664b8a5f9   5 hours ago    4.38GB
    ```
 
-4. Run the following command:
+4. Run the command with the following format:
 
    ```bash
    docker run -v name_of_your_work_folder:/home/user/run/workshop -h perturbocker --rm --name perturbo perturbo/perturbo:tag
    ```
+   For example,
+   ```bash
+   docker run -v /home/docker/workshop_test_2025:/home/user/run/workshop -h perturbocker -it --rm --name perturbo perturbo/perturbo:ifort_openmp_3.0
+   ```
+
 
 This command has the following meaning:
 
