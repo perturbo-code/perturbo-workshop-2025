@@ -398,7 +398,7 @@ For our case, we can define the *config_machine.yml* in the following way:
         - export OMP_NUM_THREADS=8
     comp_info:
         qe2pert:
-            exec: qe2pert -npools 8
+            exec: qe2pert.x -npools 8
         perturbo:
             exec: perturbo.x -npools 8
 ```
