@@ -5,7 +5,7 @@ Therefore, there are 2 scenarios for installing our package - from scratch and u
 
 ## Usage of containers
 
-It is possible to run perturbo faster and easier if you use soft called Docker. This will not be a universal solution, but it will allow you to get acquainted with the functionality of the package, as well as to run programs that are not computationally intensive.
+It is possible to run Perturbo faster and easier if you use software called Docker. This will not be a universal solution, but it will allow you to get acquainted with the functionality of the package, as well as to run programs that are not computationally intensive.
 
 ### About Docker and containers
 
@@ -22,8 +22,8 @@ For example, if we're talking about `perturbo/perturbo:gcc_openmp_3.0`, this ima
 
 1. Ubuntu shell
 2. The built gcc compiler
-3. Some supplementary staff (`vim`, `unzip`, etc.)
-4. the HDF5 and Quantum Espresso packages
+3. Some supplementary utilities (`vim`, `unzip`, etc.)
+4. The HDF5 and Quantum Espresso packages
 5. Perturbo package
 
 ![perturbo/perturbo:gcc](https://github.com/perturbo-code/perturbo-workshop-2025/blob/main/Hands-on1/images/perturbo_gcc.png)
@@ -32,7 +32,7 @@ Accordingly, by running a container of this image (more on this below) on any co
 
 ### Basic concepts
 
-1. Image is a "mini-OS" that will be used. It is these images that are hosted on the [docker hub](https://hub.docker.com), where you can find images for many different applications. That's where the name of our images comes from. In this case, what comes before the slash is the name of the repository owner, after the slash is the name of the repository itself, and after the colon is the image tag. So the name [**perturbo/perturbo:gcc_openmp**](https://hub.docker.com/repository/docker/perturbo/perturbo/general) can be understood as "The image of the perturbo user from the perturbo repository with the *gcc_openmp_3.0* tag"
+1. Image is a "mini-OS" that will be used. It is these images that are hosted on the [Docker Hub](https://hub.docker.com), where you can find images for many different applications. That's where the name of our images comes from. In this case, what comes before the slash is the name of the repository owner, after the slash is the name of the repository itself, and after the colon is the image tag. So the name [**perturbo/perturbo:gcc_openmp**](https://hub.docker.com/repository/docker/perturbo/perturbo/general) can be understood as "The image of the perturbo user from the perturbo repository with the *gcc_openmp_3.0* tag"
 2. Container - is an instance of a "virtual machine" that is created from an existing image. It is in the created container that your work is done. The relationship between an image and a container is similar to the relationship between a class and its instance. The class defines general characteristics, while we work with instances of the class. Here the essence is the same.
 
 While a container is simply an instance built from an image, the image itself can be used in different ways. It can be used to create new containers as well as to create new images. For example, the Perturbo image is built in two stages - first, the supplementary [Docker Images](https://hub.docker.com/repository/docker/perturbo/perturbo_suppl/general) (containing all the supplementary libraries). The supplementary images take [Ubuntu](https://hub.docker.com/_/ubuntu) images as their base.
@@ -43,7 +43,7 @@ Visit https://docker-curriculum.com for more information.
 
 ### Run the Docker on your computer
 
-If you want to use builded images on your computer, you will need to follow these steps:
+If you want to use built images on your computer, you will need to follow these steps:
 
 1. Install the [Docker](https://www.docker.com) application on your computer. This program should always be running, it is the Docker daemons that allow containers to run. If you have everything installed and running correctly, invoke the `docker` command in the terminal. You should then get the following system response:
 
@@ -146,7 +146,7 @@ If you want to use builded images on your computer, you will need to follow thes
    For more help on how to use Docker, head to https://docs.docker.com/go/guides/
    ```
 
-   Also, you can check that images do you have on your computer right now:
+   Also, you can check which images you have on your computer:
 
    ```bash
    docker images
@@ -158,7 +158,7 @@ If you want to use builded images on your computer, you will need to follow thes
    REPOSITORY          TAG                IMAGE ID       CREATED        SIZE
    ```
 
-   Now you don't have any images. If you want to check what containers do you have, you need to run the command `docker ps -a`, where `-a` means all containers. You'll see the following response:
+   Now you don't have any images. If you want to check which containers you have, you need to run the command `docker ps -a`, where `-a` means all containers. You'll see the following response:
 
    ```bash
    CONTAINER ID   IMAGE                           COMMAND       CREATED       STATUS                     PORTS    NAMES
@@ -198,7 +198,7 @@ It's expected to obtain something like that:
 
 This command has the following meaning:
 
-1. `-v` - V for ~~Vendetta~~ Volumes, which we talked about earlier. To connect a folder on your primary OS to a folder inside the container, specify the name of the folder on your computer, and after the colon, what the same volume inside the container will be called. In this case, the changes that will happen to the volume inside the container will be reflected in your OS and vice versa. This allows you to not only transfer input files to the container, but also to save all output-files after the container is finished and the container itself is deleted. Below we take a look at how this works;
+1. `-v` - V for ~~Vendetta~~ Volumes, which we talked about earlier. To connect a folder on your primary OS to a folder inside the container, specify the name of the folder on your computer, and after the colon, what the same volume inside the container will be called. In this case, the changes that will happen to the volume inside the container will be reflected in your OS and vice versa. This allows you to not only transfer input files to the container, but also to save all output files after the container is finished and the container itself is deleted. Below we take a look at how this works;
 
 2. `-h perturbocker` - is the hostname of the container. By default, it is the same as the container ID, which may not be particularly informative or readable. So we give it a specific name;
 3. `--rm` - deletes the container after its use is finished. Made to save memory. If it is important for you to save the container itself (for example, if you have installed any packages there), this option should be removed, and the container should be started using [`docker start`](https://docs.docker.com/engine/reference/commandline/start/) in the future.
@@ -206,10 +206,10 @@ This command has the following meaning:
 
 You need to change two parameters:
 
-1. The names of your volume;
+1. The name of your volume;
 2. The name of the image itself - instead of `tag` specify the tag of the image you want to use as a basis for creating the container.
 
-Full list of the command line options is provided on the [offical page](https://docs.docker.com/engine/reference/commandline/run/).
+Full list of the command line options is provided on the [official page](https://docs.docker.com/engine/reference/commandline/run/).
 
 Now we can run the container aaand... nothing will happen. The point is that inside the container itself, it has a single action prescribed to it - to run bash. If we run it without interactive mode, it will run bash and that will be the end of it. That doesn't work for us - we're interested in running inside the container. That's why we need to run another parameter  `-it` (means interactive):
 
@@ -219,14 +219,14 @@ docker run -v name_of_your_work_folder:/home/user/run/workshop -h perturbocker -
 
 Now you're inside the container, congratulations!
 
-We can check, that we actually run the container. Call in the new Terminal window `docker ps -a`, and you'll obtain:
+We can check that we are actually running the container. In a new terminal window, run `docker ps -a`, and you’ll see:
 
 ```bash 
 CONTAINER ID   IMAGE                               COMMAND       CREATED         STATUS                     PORTS     NAMES
 58dfcc3ac8cc   perturbo/perturbo:gcc_openmp_3.0    "/bin/bash"   6 seconds ago   Up 3 seconds                         perturbo
 ```
 
-If you want to use perturbo, all you have to do is type in the terminal
+If you want to use `perturbo.x`, all you have to do is type in the terminal
 
 ```bash
 perturbo.x 
@@ -258,15 +258,15 @@ mv test_volumes test_volumes_2
 
 We can check that in our Host OS the file has also been renamed. That is, we can change files inside the container and inside the Host OS at the same time.
 
-Now you are ready for the usage of Perturbo in the container form!
+Now you are ready to use Perturbo in container form!
 
 ## Testsuite
 
-Even in case of using a container, there may be problems with using the code due to different architectures of image author's processors and yours, wrong compilation options from the beginning and so on. In the case of installing from a scratch, the problem becomes even more serious, since errors can occur at many stages. Accordingly, you need a powerful tool that allows you to perform full testing of the installed package. Such a tool is [Testsuite](https://perturbopy.readthedocs.io/en/latest/testsuite.html), distributed in the Perturbopy package.
+Even in case of using a container, there may be problems with using the code due to different architectures of image author's processors and yours, wrong compilation options from the beginning and so on. In the case of installing from scratch, the problem becomes even more serious, since errors can occur at many stages. Accordingly, you need a powerful tool that allows you to perform full testing of the installed package. Such a tool is [Testsuite](https://perturbopy.readthedocs.io/en/latest/testsuite.html), distributed in the Perturbopy package.
 
 ### General description
 
-As we discissed today, Perturbo package provides two executables:
+As we discussed today, Perturbo package provides two executables:
 
 1. `qe2pert.x` to postprocess the preliminary DFT, DFPT, and Wannier90 calculations and to compute the electron-phonon matrix elements in the Wannier basis stored in the `prefix_epr.h5` file.
 
@@ -274,7 +274,7 @@ As we discissed today, Perturbo package provides two executables:
 
 For more details, please read this [Perturbo page](https://perturbo-code.github.io/mydoc_features.html).
 
-To test this executables, we provide a testsuite within the `Perturbopy` package. We recommend to run the testsuite:
+To test these executables, we provide a testsuite within the `Perturbopy` package. We recommend to run the testsuite:
 
 * to verify that the code runs correctly after download and installation;
 * if some modifications to the source code have been made;
@@ -284,13 +284,13 @@ To test this executables, we provide a testsuite within the `Perturbopy` package
 
 #### Basic run
 
-To run testsuite you need a folder with input files, reference files, configuration files, etc. You can find the example of this folder in the `/opt/q-e-qe-7.3/perturbo/tests` folder.  We will use these tests today, but in general you can (and in some cases even should) write your own tests.
+To run the testsuite you need a folder with input files, reference files, configuration files, etc. You can find the example of this folder in the `/opt/q-e-qe-7.3/perturbo/tests` folder.  We will use these tests today, but in general you can (and in some cases even should) write your own tests.
 
 #### Testing `perturbo.x` only
 
 If you plan to use (or you did modifications only to) the `perturbo.x` executable, the testsuite will automatically run `perturbo.x` for several materials and calculation modes and check that the results obtained with the new executable are the same as the reference.
 
-To test the `perturbo.x` executable you need to make the configuration file. As an example, in the *tests/config_machine* folder, you can take the *config_machine_perturbo.yml* file. This file contains basic information about running tesuite for `perturbo.x`.
+To test the `perturbo.x` executable you need to make the configuration file. As an example, in the *tests/config_machine* folder, you can take the *config_machine_perturbo.yml* file. This file contains basic information about running testuite for `perturbo.x`.
 
 1. Copy the template YAML file inside the */opt/q-e-qe-7.3/perturbo/tests/config_machine* folder:
 
@@ -317,10 +317,10 @@ By default, the file named *config_machine.yml* is the one called by the program
 Below the meaning of each of the blocks:
 
 * `PERT_SCRATCH` is the address of the folder where the auxiliary files in the tests will be located.
-* `prel_coms` is a set of commands to be executed **before** the `perturbo.x` run. This could be loading packages, specifying any environment variables, etc. Enter every command as a separate line preceded by a hyphen, respecting the file indentation. In our case, we need to save only second line of `prel_coms` in case of usage container with openmp, of we can delete this commands at all.
-* `comp_info` - this block contains information about the `perturbo.x` computation. It has the `exec` field that specifies the run command taking into account the parallelization and other machine specifics. In this example, `perturbo.x` will be ran with the SLURM srun command using 8 MPI tasks.
+* `prel_coms` is a set of commands to be executed **before** the `perturbo.x` run. This could be loading packages, specifying any environment variables, etc. Enter every command as a separate line preceded by a hyphen, respecting the file indentation. In our case, we need to keep only the second line of `prel_coms` when using the OpenMP container, or delete these commands entirely.
+* `comp_info` - this block contains information about the `perturbo.x` computation. It has the `exec` field that specifies the run command taking into account the parallelization and other machine specifics. In this example, `perturbo.x` will be run with the SLURM srun command using 8 MPI tasks.
 
-We will use containers without MPI, so our final *config_machine_perturbo.yml* file can looks in the following way:
+We will use containers without MPI, so our final *config_machine_perturbo.yml* file can look as follow:
 
 ```bash
     PERT_SCRATCH: tmp
@@ -331,7 +331,7 @@ We will use containers without MPI, so our final *config_machine_perturbo.yml* f
             exec: perturbo.x -npools 8
 ```
 
-Once, the `config_machine.yml` is set up, navigate back to the `tests` folder and run:
+Once the `config_machine.yml` is set up, navigate back to the `tests` folder and run:
 
 ```bash
    run-tests -s
@@ -339,9 +339,9 @@ Once, the `config_machine.yml` is set up, navigate back to the `tests` folder an
 
 This command will automatically load and run all the tests from the `perturbopy` package and show you all intermediate steps.
 
-By default, in the case of successful run of all tests one will see **n passed** as the final line of the output, where **n** is the number of tests. You will also see that some tests have been skipped. This is fine, because the tests for `qe2pert.x` are skipped if it's not specified, as well as tests for the GPU-compilation of the Perturbo.
+By default, in the case of a successful run of all tests, one will see **n passed** as the final line of the output, where **n** is the number of tests. You will also see that some tests have been skipped. This is fine, because the tests for `qe2pert.x` are skipped if it's not specified, as well as tests for the GPU-compilation of the Perturbo.
 
-If all tests are passed, the `PERT_SCRATCH/perturbo` directory will be empty after the `run-tests` execution. In the case of a failure of one or more tests, the corresponding test folder(s) kept in the `PERT_SCRATH/perturbo` directory.
+If all tests are passed, the `PERT_SCRATCH/perturbo` directory will be empty after the `run-tests` execution. In the case of a failure of one or more tests, the corresponding test folder(s) kept in the `PERT_SCRATCH/perturbo` directory.
 
 #### Testing `qe2pert.x` and `perturbo.x`
 
@@ -351,11 +351,11 @@ If you would like to test both `qe2pert.x` and `perturbo.x` executables, which i
 2. Use preliminary *ab initio* calculations (DFT, DFPT, Wannier90, more on that [here](https://perturbo-code.github.io/mydoc_qe2pert.html) and run `qe2pert.x` to generate new `prefix_epr.h5` files.
 3. Run part of the calculations from step 1 again, and compare the outputs of `perturbo.x` produced with the new `prefix_epr.h5` files.
 
-The step 3 is necessary to test the `qe2pert.x` executable because one cannot compare the `prefix_epr.h5` files to the reference ones directly due to gauge freedom. Therefore, we need to use `perturbo.x`, whose correctness we confirmed in step 1, to use it to determine whether `qe2pert.x` worked correctly. Since there is no need to check all the `perturbo.x` tests to verify the work of `qe2pert.x`, at the third stage we run only three claculation modes of Perturbo for each `prefix_epr.h5` file: `phdisp`, `ephmat` and `bands`. If these three tests pass, it means that `qe2pert.x` works correctly.
+Step 3 is necessary to test the `qe2pert.x` executable because one cannot compare the `prefix_epr.h5` files to the reference ones directly due to gauge freedom. Therefore, we need to use `perturbo.x`, whose correctness we confirmed in step 1, to use it to determine whether `qe2pert.x` worked correctly. Since there is no need to check all the `perturbo.x` tests to verify the work of `qe2pert.x`, at the third stage we run only three claculation modes of Perturbo for each `prefix_epr.h5` file: `phdisp`, `ephmat` and `bands`. If these three tests pass, it means that `qe2pert.x` works correctly.
 
-By default, the `qe2pert.x` testing is disabled as it is more time and memory consuming, because it's require to download supplementary materials from the cloud folder and run `qe2pert.x` calculations additionally.
+By default, the `qe2pert.x` testing is disabled as it is more time and memory consuming, because it requires to download supplementary materials from the cloud folder and run `qe2pert.x` calculations additionally.
 
-Similarly to `perturbo.x`-only tests, the user needs to make a new the *config_machine/config_machine.yml* file, but this time the file should include more information. As a reference, you can take file  *config_machine_qe2pert.yaml*
+Similarly to `perturbo.x`-only tests, the user needs to make a new *config_machine/config_machine.yml* file, but this time the file should include more information. As a reference, you can take file  *config_machine_qe2pert.yml*
 
 1. Make your copy of the template YAML file:
 
@@ -409,4 +409,4 @@ To enable the tests of `qe2pert.x`, activate the `--run_qe2pert` option:
    run-tests --run_qe2pert -s
 ```
 
-When the tests are successful, you'll be confident that your perturbo is working well and you can move on to the next sessions.
+When the tests are successful, you'll be confident that your Perturbo is working well and you can move on to the next sessions.
