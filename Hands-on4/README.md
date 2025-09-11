@@ -4,7 +4,7 @@
 
 This hands-on session covers electron-phonon scattering and transport calculations. We will be running calculation modes **setup**(grid setup), **imsigma** (scattering rates), **trans-rta** (RTA transport), **trans-mag-rta** (RTA magnetotransport), **trans-ita** (full BTE transport), and **trans-mag-ita** (full BTE magnetotransport) on silicon. 
 
-Please download all the relevant files from this [github repository](https://github.com/perturbo-code/perturbo-workshop-2023/tree/main), and run docker on your local machine.  The References folder inside each of the directories contains outputs from previous runs. Some heavy files used in this session, including the `si\_epr.h5` and `tmp` files, can be downloaded from this [link](https://caltech.box.com/s/vgrin1oehvo7pbv3pvbufagp545b7fe9). It should then be stored in the correct places. For example, the `si\_epr.h5` file should be put in `qe2pert` folder inside
+Please download all the relevant files from this [github repository](https://github.com/perturbo-code/perturbo-workshop-2023/tree/main), and run docker on your local machine.  The References folder inside each of the directories contains outputs from previous runs. Some heavy files used in this session, including the `si_epr.h5` and `tmp` files, can be downloaded from this [link](https://caltech.box.com/s/vgrin1oehvo7pbv3pvbufagp545b7fe9). It should then be stored in the correct places. For example, the `si_epr.h5` file should be put in `qe2pert` folder inside
 `Hands-on4/silicon`.
 
 ```
@@ -413,7 +413,7 @@ We can plot the Hall conductivity as a function of magnetic field using the scri
 ## Transport calculations using GPU version of PERTURBO
 Currently, the GPU feature accelerates the integration part in all calculation modes of transport and ultrafast dynamics, such as `'trans-rta'`, `'trans-ita'`, `'trans-mag-rta'`, `'trans-mag-ita'`, and `'dynamics-run'`.
 
-We will take the `'trans-ita'` simulation of GaAs as an example.
+We will take the `'trans-ita'` simulation of GaAs as an example. We will just briefly show the difference in the input file instead of running the full calculation here.
 
 
 The difference between CPU and GPU versions of PERTURBO lies in the value of `scat_impl` in input file `pert.in`.
@@ -425,6 +425,7 @@ The value of `scat_impl` is set to `'std'` for CPU version of PERTURBO, which is
 ```bash
 &perturbo
  scat_impl = 'std'
+/
 ```
 
 ### NEW GPU version of PERTURBO
@@ -432,4 +433,5 @@ The value of `scat_impl` is set to `'std'` for CPU version of PERTURBO, which is
 ```bash
 &perturbo
  scat_impl = 'tgt'
+/
 ```
