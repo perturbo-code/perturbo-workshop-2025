@@ -1,21 +1,35 @@
-# Hands-on session 3  
+# Hands-on session 4  
 
 ## Introduction
 
 This hands-on session covers electron-phonon scattering and transport calculations. We will be running calculation modes **setup**(grid setup), **imsigma** (scattering rates), **trans-rta** (RTA transport), **trans-mag-rta** (RTA magnetotransport), **trans-ita** (full BTE transport), and **trans-mag-ita** (full BTE magnetotransport) on silicon. 
 
-Please download all the relevant files from this [github repository](https://github.com/perturbo-code/perturbo-workshop-2023/tree/main), and run docker on your local machine.  The References folder inside each of the directories contains outputs from previous runs. 
+Please download all the relevant files from this [github repository](https://github.com/perturbo-code/perturbo-workshop-2023/tree/main), and run docker on your local machine.  The References folder inside each of the directories contains outputs from previous runs. Some heavy files used in this session, including the `si\_epr.h5` and `tmp` files, can be downloaded from this [link](https://caltech.box.com/s/vgrin1oehvo7pbv3pvbufagp545b7fe9). It should then be stored in the correct places. For example, the `si\_epr.h5` file should be put in `qe2pert` folder inside
+`Hands-on4/silicon`.
 
 ```
 docker run -v <path-to_your_work_folder>:/home/user/run/<name_of_your_work_folder_in_container> --user 500 -it --rm --name perturbo perturbo/perturbo:<tag>
 ```
+
+For example, 
+```
+docker run -v /Users/eric/work/:/home/user/run/workshop -h perturbocker -it --rm --name perturbogcc perturbo/perturbo:gcc_openmp_3.0
+```
+
+And then you can download the materials from the github repository of `Perturbo-workshop-2025` and put them in the folder `/Users/eric/work` on your local machine. 
+
+``` bash
+cd /Users/eric/work
+git clone git@github.com:perturbo-code/perturbo-workshop-2025.git
+```
+
 
 ## calc_mode = 'setup'
 
 You can find all the inputs inside the folder
 
 ``` bash
-cd /home/user/run/perturbo-docker/silicon/perturbo/pert-setup-electron
+cd /home/user/run/workshop/perturbo-workshop-2025/Hands-on4/silicon/perturbo/pert-setup-electron
 ```
 
 The input file pert.in has several parameters
@@ -49,7 +63,7 @@ The **si.temper** file contains information about temperature, chemical potentia
 
 Create the soft link to the epr file **si_eph.h5**
 ``` bash
-ln -sf /home/user/run/perturbo-docker/silicon/qe2pert/si_epr.h5
+ln -sf /home/user/run/workshop/perturbo-workshop-2025/Hands-on4/silicon/qe2pert/si_epr.h5
 ```
 and run the calculation. 
 ``` bash
@@ -67,7 +81,7 @@ The setup calculation takes the information about the grid, energy window, tempe
 You can find all the inputs inside the folder
 
 ``` bash
-cd /home/user/run/perturbo-docker/silicon/perturbo/pert-imsigma-electron
+cd /home/user/run/workshop/perturbo-workshop-2025/Hands-on4/silicon/perturbo/pert-imsigma-electron
 ```
 
 This calculation computes the imaginary part of the self-energy, from which information about the scattering rates can be extracted easily using the relation $\Gamma_{n\mathbf{k}}$ = $\frac{2}{\hbar}\mathrm{Im}\Sigma_{n\mathbf{k}}$. 
@@ -98,7 +112,7 @@ Copy the input files **si.temper** and **si_tet.kpt** from the setup calculation
 Create a soft link to the **si_epr.h5** (as explained in the setup calculation), and run the calculation
 
 ``` bash
-ln -sf /home/user/run/perturbo-docker/silicon/qe2pert/si_epr.h5
+ln -sf /home/user/run/workshop/perturbo-workshop-2025/Hands-on4/silicon/qe2pert/si_epr.h5
 export OMP_NUM_THREADS=8
 perturbo.x -i pert.in | tee pert.out
 ```
@@ -110,9 +124,11 @@ The calculation outputs 3 files - **si.imsigma**, **si.imsigma_mode** and **si_i
 - **si.imsigma_mode** contains mode resolved values of $\mathrm{Im}\Sigma$ in meV as a function of carrier energies.
 - **si_imsigma.yml** contains information about **si_imsigma.yml** in a YAML format for easier postprocessing.
 
-Use the plotting script **plot.py** to plot the values of $\mathrm{Im}\Sigma$ vs energy.
+Use the plotting script **plot.py** (with `Perturbopy` package installed) to plot the values of $\mathrm{Im}\Sigma$ vs energy.
 
 <img src="./silicon/perturbo/pert-imsigma-electron/References/si-imsigma.png" width="700" height="400">
+
+(Note that you can install the `Perturbopy` on your laptop following the previous sessions.)
 
 Note that this is not a completely converged calculation, as we have scaled down the parameters to reduce the computational cost. 
 
@@ -123,7 +139,7 @@ Note that this is not a completely converged calculation, as we have scaled down
 You can find all the inputs inside the folder
 
 ``` bash
-cd /home/user/run/perturbo-docker/silicon/perturbo/pert-trans-RTA-electron
+cd /home/user/run/workshop/perturbo-workshop-2025/Hands-on4/silicon/perturbo/pert-trans-RTA-electron
 ```
 
 This calculation computes the transport coefficients such as conductivities, mobilities and seebeck coefficient for a given configuration specified in the **si.temper** file in the relaxation time approximation (RTA). This calculation is performed at zero magnetic field.
@@ -169,7 +185,7 @@ The input file pert.in
 
 We are ready to run the RTA transport calculation:
 ```bash
-ln -sf /home/user/run/perturbo-docker/silicon/qe2pert/si_epr.h5
+ln -sf /home/user/run/workshop/perturbo-workshop-2025/silicon/qe2pert/si_epr.h5
 export OMP_NUM_THREADS=8
 perturbo.x -i pert.in | tee pert.out
 ```
@@ -183,7 +199,7 @@ The calculation outputs 5 files - **si.cond**, **si.trans_coef**,**si.tdf**, **s
 ## calc_mode = 'trans-mag-rta'
 
 ``` bash
-cd /home/user/run/perturbo-docker/silicon/perturbo/pert-trans-mag-RTA-electron
+cd /home/user/run/workshop/perturbo-workshop-2025/silicon/perturbo/pert-trans-mag-RTA-electron
 ```
 
 This calculation is very similar to the calc_mode 'trans_rta', except for finite magnetic fields. 
@@ -222,7 +238,7 @@ We specify the magnetic fields inside the file **si.temper**
 
 Now, run the calculation
 ```bash
-ln -sf /home/user/run/perturbo-docker/silicon/qe2pert/si_epr.h5
+ln -sf /home/user/run/workshop/perturbo-workshop-2025/silicon/qe2pert/si_epr.h5
 export OMP_NUM_THREADS=8
 perturbo.x -i pert.in | tee pert.out
 ```
@@ -235,7 +251,7 @@ The output files generated are same as in the above calculation, except for diff
 You can find all the inputs inside the folder
 
 ``` bash
-cd /home/user/run/perturbo-docker/silicon/perturbo/pert-trans-ITA-electron
+cd /home/user/run/workshop/perturbo-workshop-2025/silicon/perturbo/pert-trans-ITA-electron
 ```
 
 This calculation computes the transport coefficients using the full Boltzmann Transport Equation using the iterative approach. 
@@ -274,12 +290,12 @@ The input file pert.in
 
 <span style="color:red"> Note:</span> The flag ``load_scatter_eph`` is set commented out in this calculation. It reads the electron-phonon matrix elements from the stored hdf5 file  **tmp/si_eph_g2_p1.h5** that was generated using a previous transport run, so as to reuse the same matrix elements without having to compute them again. 
 
-If your computer is slow, please feel free to download the pre-existing tmp file, and uncomment this flag. 
+If your computer is slow, please feel free to download the pre-existing tmp file from this [link](https://caltech.box.com/s/vgrin1oehvo7pbv3pvbufagp545b7fe9), and uncomment this flag ``load_scatter_eph``. 
 
 
 We are ready to run the ITA transport calculation:
 ```bash
-ln -sf /home/user/run/perturbo-docker/silicon/qe2pert/si_epr.h5
+ln -sf /home/user/run/workshop/perturbo-workshop-2025/silicon/qe2pert/si_epr.h5
 export OMP_NUM_THREADS=8
 perturbo.x -i pert.in | tee pert.out
 ```
@@ -296,7 +312,7 @@ PERTURBO now provides a method to compute mode-resolved transport properties by 
 
 Navigate to the folder 
 ```bash
-cd /home/user/run/perturbo-docker/silicon/perturbo/pert-trans-phexclude
+cd /home/user/run/workshop/perturbo-workshop-2025/silicon/perturbo/pert-trans-phexclude
 ```
 and open the input file pert.in
 ```
@@ -330,9 +346,11 @@ Note that we have specified the flag ``ph_mode_exclude_ranges(1,:)=1,2``. This e
 
 Copy the **si_tet.h5** file from the setup calculation. The file **si.temper** is already provided in the input and is the same as that of the regular ``trans-ita`` calculation.
 
+If your computer is slow, please feel free to download the pre-existing tmp file from this [link](https://caltech.box.com/s/vgrin1oehvo7pbv3pvbufagp545b7fe9), and uncomment this flag ``load_scatter_eph``. 
+
 Run the calculation
 ```bash
-ln -sf /home/user/run/perturbo-docker/silicon/qe2pert/si_epr.h5
+ln -sf /home/user/run/workshop/perturbo-workshop-2025/silicon/qe2pert/si_epr.h5
 export OMP_NUM_THREADS=8
 perturbo.x -i pert.in | tee pert.out
 ```
@@ -373,10 +391,11 @@ This calculation is similar to the calc_mode 'trans-ita', except calculations ar
 ```
 The **si.temper** (same as ``calc_mode='trans-mag-rta'``) files is already provided in the input folder. Copy the file **si_tet.h5** from setup calculation.
 
+If your computer is slow, please feel free to download the pre-existing tmp file from this [link](https://caltech.box.com/s/vgrin1oehvo7pbv3pvbufagp545b7fe9), and uncomment this flag ``load_scatter_eph``. 
 
 
 ```bash
-ln -sf /home/user/run/perturbo-docker/silicon/qe2pert/si_epr.h5
+ln -sf /home/user/run/workshop/perturbo-workshop-2025/silicon/qe2pert/si_epr.h5
 export OMP_NUM_THREADS=8
 perturbo.x -i pert.in | tee pert.out
 ```
@@ -390,3 +409,27 @@ We can plot the Hall conductivity as a function of magnetic field using the scri
 ![](./silicon/perturbo/pert-trans-mag-ITA-electron/References/si-trans-mag.png)
 
 <span style="color:red"> Note:</span> This calculation is not completely converged as we downscaled the grid size to make the calculation affordable.
+
+## Transport calculations using GPU version of PERTURBO
+Currently, the GPU feature accelerates the integration part in all calculation modes of transport and ultrafast dynamics, such as `'trans-rta'`, `'trans-ita'`, `'trans-mag-rta'`, `'trans-mag-ita'`, and `'dynamics-run'`.
+
+We will take the `'trans-ita'` simulation of GaAs as an example.
+
+
+The difference between CPU and GPU versions of PERTURBO lies in the value of `scat_impl` in input file `pert.in`.
+
+
+### NEW CPU version of PERTURBO
+
+The value of `scat_impl` is set to `'std'` for CPU version of PERTURBO, which is also the default value.
+```bash
+&perturbo
+ scat_impl = 'std'
+```
+
+### NEW GPU version of PERTURBO
+
+```bash
+&perturbo
+ scat_impl = 'tgt'
+```
