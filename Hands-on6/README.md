@@ -13,9 +13,9 @@ The workflow for generating the epr.h5 file is the same as shown in earlier hand
 
 Some comments about the workflow:
 * Fully-relativistic pseudopotentials must be used
-* In the SCF step, `noncolin` and `lspinorb` flags must be set to true
-* In the NSCF step, `noncolin` and `lspinorb` flags must be set to true
-* In the Wannier90 step, `spinors` flag must be true (in the **diam.win** input file) and `write_spn` flag must be true (in the **pw2wan.in** input file)
+* In the SCF step, `noncolin` and `lspinorb` flags must be set to `.true.`
+* In the NSCF step, `noncolin` and `lspinorb` flags must be set to `.true.`
+* In the Wannier90 step, `spinors` flag must be `.true.` (in the **diam.win** input file) and `write_spn` flag must be `.true.` (in the **pw2wan.in** input file)
 
 Note, the Wannier90 calculation flag `write_spn = .true.` will generate the **diam.spn** file. This file is required in the qe2pert step.
 
@@ -39,9 +39,26 @@ Here is the input file (**qe2pert.in**):
 /
 ```
 
-Note, the flag `lspinmat` must be set to true to perform the spin calculations.
+Note, the flag `lspinmat` must be set to `.true.` to perform the spin calculations.
 
-Before running `qe2pert.x`, ensure that the files **diam.spn**, **diam_centres.xyz**, **diam_u.mat**, and, when present, **diam_u_dis.mat** are in the run directory. The **diam.spn** file is generated from the Wannier90 calculation flag `write_spn`. Create a directory called `tmp` and inside it soft link the NSCF output directory **diam.save** (located in `pw-ph-wann/nscf/tmp`).
+Before running `qe2pert.x`, ensure that the files **diam.spn**, **diam_centres.xyz**, **diam_u.mat**, and, when present, **diam_u_dis.mat** are in the run directory. The **diam.spn** file is generated from the Wannier90 calculation flag `write_spn`. Create a directory called `tmp` and inside it soft link the NSCF output directory **diam.save** and **diam.xml** (located in `pw-ph-wann/nscf/tmp`). 
+
+```bash
+# Go to the qe2pert directory
+cd qe2pert
+
+# Link Wannier matrices/centers if not already present
+ln -sf ../pw-ph-wann/wann/diam.spn
+ln -sf ../pw-ph-wann/wann/diam_centers.xyz
+ln -sf ../pw-ph-wann/wann/diam_u.mat
+ln -sf ../pw-ph-wann/wann/diam_u_dis.mat
+
+# Link nscf files
+mkdir tmp 
+cd tmp 
+ln -sf ../../pw-ph-wann/nscf/tmp/diam.xml
+ln -sf ../../pw-ph-wann/nscf/tmp/diam.save/
+```
 
 Run `qe2pert.x`:
 
@@ -54,7 +71,9 @@ Now, we can perform calculations using the **diam_epr.h5** file.
 
 ## Access the existing epr file
 
-The **diam_epr.h5** file can be found at this [link](https://caltech.box.com/s/20dn5dbcl8koqiypxrc0mqifgezkijza).
+Instead of running the above steps, one can download the **diam_epr.h5** file from this [link](https://caltech.box.com/s/20dn5dbcl8koqiypxrc0mqifgezkijza).
+
+The **diam_epr.h5** file must be downloaded and placed in each folder with the calculations. Alternatively, one can place the **diam_epr.h5** in the `/diamond/perturbo/` folder and we will create soft links to this file.
 
 ## E-ph spin-flip matrix elements
 
@@ -82,7 +101,13 @@ Here is the input file (**pert.in**):
 /
 ```
 
-Before running `perturbo.x`, ensure that these files (**diam_epr.h5**, **diam_band.kpt**, and **diam_band.qpt**) are in the run directory. Now, we can run `perturbo.x`:
+Before running `perturbo.x`, ensure that these files (**diam_epr.h5**, **diam_band.kpt**, and **diam_band.qpt**) are in the run directory. Create a soft link to the **diam_epr.h5** file to the current directory:
+
+```bash
+ln -sf ../diam_epr.h5
+```
+
+Now, we can run `perturbo.x`:
 
 ```bash
 mpirun -n 1 perturbo.x -npools 1 -i pert.in > pert.out 
@@ -117,6 +142,10 @@ Here is the input file(**pert.in**):
 ```
 
 Similar to the `'bands'` calculation, the **k**-point list (here **diam_band.kpt**) must be included in the run directory. Before running `perturbo.x`, remember to soft link the **diam_epr.h5** in the run directory.
+
+```bash
+ln -sf ../diam_epr.h5
+```
 
 Run `perturbo.x`:
 
@@ -170,7 +199,13 @@ Here is the input file (**pert.in**):
 
 The **diam.temper** file contains information about temperature, chemical potential, and carrier concentration.
 
-Before running `perturbo.x`, ensure that these files (**diam_epr.h5**, **diam_band.kpt**, and **diam.temper**) are in the run directory. Now, we can run `perturbo.x`:
+Before running `perturbo.x`, ensure that these files (**diam_epr.h5**, **diam_band.kpt**, and **diam.temper**) are in the run directory. We can create a soft link the **diam_epr.h5** file location to the current directory:
+
+```bash
+ln -sf ../diam_epr.h5
+```
+
+Now, we can run `perturbo.x`:
 
 ```bash
 mpirun -n 1 perturbo.x -npools 1 -i pert.in > pert.out 
@@ -215,12 +250,27 @@ Here is the input file (**pert.in**):
  /
 ```
 
-We will use the **diam.temper** and **diam_tet.kpt** files from the previous `'setup'` calculation. Create a soft link the **diam_epr.h5** file, and run `perturbo.x`:
+We will use the **diam.temper** and **diam_tet.kpt** files from the previous `'setup'` calculation. Copy these files to the current run directory:
+
+```bash
+cp ../pert-setup/diam.temper .
+cp ../pert-setup/diam_tet.kpt .
+```
+
+Make sure to create a soft link from the **diam_epr.h5** file location to the current directory:
+
+```bash
+ln -sf ../diam_epr.h5
+```
+
+Now, run `perturbo.x`:
 
 ```bash
 export OMP_NUM_THREADS=4
 mpirun -n 8 perturbo.x -npools 8 -i pert.in > pert.out
 ```
+
+Note that this calculation can take some time (around 5-10 minutes). If you use OpenMP, the calculation will be much faster.
 
 The calculation outputs 5 files - **diam.imsigma**, **diam.imsigma_mode**, **diam.imsigma_flip**, **diam.imsigma_flip_mode**, and **diam_imsigma_spin.yml**
 - **diam.imsigma** contains $\mathrm{Im}\Sigma$ in meV as a function of carrier energies.
@@ -263,7 +313,21 @@ Here is the input file (**pert.in**):
 /
 ```
 
-We will use the **diam.temper** and **diam_tet.kpt** files from the `'setup'` calculation, and the **diam.imsigma_flip** file from the previous `'imsigma_spin'` calculation. Create a soft link the **diam_epr.h5** file, and run `perturbo.x`:
+We will use the **diam.temper** and **diam_tet.h5** files from the `'setup'` calculation, and the **diam.imsigma_flip** file from the previous `'imsigma_spin'` calculation. Copy these files to the current directory:
+
+```bash
+cp ../pert-setup/diam.temper .
+cp ../pert-setup/diam_tet.h5 .
+cp ../pert-imsigma-spin/diam.imsigma_flip .
+```
+
+Make sure to create a soft link the **diam_epr.h5** file location to the current directory:
+
+```bash
+ln -sf ../diam_epr.h5
+```
+
+Now, run `perturbo.x`:
 
 ```bash
 export OMP_NUM_THREADS=4
