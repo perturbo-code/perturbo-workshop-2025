@@ -1,0 +1,438 @@
+---
+program: perturbo
+
+start date and time:
+   date: 11 September 2025
+   time: "10:25:57"
+
+parallelization:
+   type: MPI+OpenMP
+   number of MPI tasks:   1
+   number of OpenMP threads:  64
+   number of nodes:   1
+
+input parameters:
+   before conversion (before reading from epr file):
+      band_max:                  10
+      band_min:                   9
+      boltz_acc_thr:           0.0000000000000000E+00
+      boltz_de:           1.0000000000000000E+00
+      boltz_efield:          [ 0.0000000000000000E+00,   0.0000000000000000E+00,   0.0000000000000000E+00,  ]
+      boltz_emax:           9.9990000000000000E+03
+      boltz_emin:          -9.9990000000000000E+03
+      boltz_init_dist:          
+      boltz_init_e0:          -9.9990000000000000E+03
+      boltz_init_smear:           2.0000000000000000E+01
+      boltz_kdim:          [        80,          80,          80,  ]
+      boltz_norm_dist:          False
+      boltz_nstep:                   0
+      boltz_nstep_min:                   1
+      boltz_qdim:          [        80,          80,          80,  ]
+      calc_mode:          spinlifetime
+      cauchy_scale:           1.0000000000000000E+00
+      scat_impl:          std
+      cum_de:           1.0000000000000001E-01
+      cum_inner_emax:           1.0000000000000001E-01
+      cum_inner_emin:          -1.0000000000000001E-01
+      cum_outer_emax:           1.0000000000000001E-01
+      cum_outer_emin:          -1.0000000000000001E-01
+      cum_outer_np:                   1
+      debug:          False
+      delta_smear:           2.0000000000000000E+01
+      find_efermi:          False
+      fklist:          
+      fqlist:          
+      ftemper:          diam.temper
+      full_ite:          True 
+      hole:          False
+      lmagsym:          False
+      load_scatter_eph:          False
+      nsamples:              100000
+      output_nstep:                   1
+      phfreq_cutoff:           3.0000000000000000E+00
+      polar_split:          
+      prefix:          diam
+      sampling:          cauchy
+      solver:          rk4
+      spectral_emax:           1.0000000000000001E-01
+      spectral_emin:          -1.0000000000000001E-01
+      spectral_np:                   1
+      time_step:           1.0000000000000000E+00
+      tmp_dir:          ./
+      trans_thr:           2.0000000000000000E-03
+      scat_impl:          std
+      use_mem:          True 
+      yaml_fname:          pert_output.yml
+   after conversion:
+      band_max:                  10
+      band_min:                   9
+      boltz_acc_thr:           0.0000000000000000E+00
+      boltz_de:           7.3498617648950546E-05
+      boltz_efield:          [ 0.0000000000000000E+00,   0.0000000000000000E+00,   0.0000000000000000E+00,  ]
+      boltz_emax:           7.3491267787185654E+02
+      boltz_emin:          -7.3491267787185654E+02
+      boltz_init_dist:          
+      boltz_init_e0:          -7.3491267787185654E+02
+      boltz_init_smear:           1.4699723529790110E-03
+      boltz_kdim:          [        80,          80,          80,  ]
+      boltz_norm_dist:          False
+      boltz_nstep:                   0
+      boltz_nstep_min:                   1
+      boltz_qdim:          [        80,          80,          80,  ]
+      calc_mode:          spinlifetime
+      cauchy_scale:           1.0000000000000000E+00
+      scat_impl:          std
+      cum_de:           7.3498617648950550E-06
+      cum_inner_emax:           7.3498617648950553E-03
+      cum_inner_emin:          -7.3498617648950553E-03
+      cum_outer_emax:           7.3498617648950553E-03
+      cum_outer_emin:          -7.3498617648950553E-03
+      cum_outer_np:                   1
+      debug:          False
+      delta_smear:           1.4699723529790110E-03
+      find_efermi:          False
+      fklist:          
+      fqlist:          
+      ftemper:          diam.temper
+      full_ite:          True 
+      hole:          False
+      lmagsym:          False
+      load_scatter_eph:          False
+      nsamples:              100000
+      output_nstep:                   1
+      phfreq_cutoff:           2.2049585294685165E-04
+      polar_split:          
+      prefix:          diam
+      sampling:          cauchy
+      solver:          rk4
+      spectral_emax:           7.3498617648950553E-03
+      spectral_emin:          -7.3498617648950553E-03
+      spectral_np:                   1
+      time_step:           2.0670686467503085E+01
+      tmp_dir:          ./
+      trans_thr:           2.0000000000000000E-03
+      scat_impl:          std
+      use_mem:          True 
+      yaml_fname:          diam_spinlifetime.yml
+
+
+basic data:
+   alat:           6.7250000000
+   alat units:       bohr
+   # a vector is a row
+   lattice vectors:
+         - [  -0.50000,     0.00000,     0.50000,  ]
+         - [   0.00000,     0.50000,     0.50000,  ]
+         - [  -0.50000,     0.50000,     0.00000,  ]
+   lattice vectors units:       alat
+   reciprocal lattice vectors:
+   # a vector is a row
+         - [  -1.00000,    -1.00000,     1.00000,  ]
+         - [   1.00000,     1.00000,     1.00000,  ]
+         - [  -1.00000,     1.00000,    -1.00000,  ]
+   reciprocal lattice vectors units:       2pi/alat
+   number of atoms in unit cell:                2
+   atomic positions:
+   # a vector is a row
+         - [   0.00000,     0.00000,     0.00000,  ]
+         - [   0.25000,     0.25000,     0.25000,  ]
+   atomic positions units:       alat
+   volume:          76.0355820312
+   volume units:       bohr^3
+   number of symmetry operations:               48
+   symop:
+      1:
+         - [    1,      0,      0,  ]
+         - [    0,      1,      0,  ]
+         - [    0,      0,      1,  ]
+      2:
+         - [    0,      1,      0,  ]
+         - [    1,      0,      0,  ]
+         - [   -1,     -1,     -1,  ]
+      3:
+         - [   -1,     -1,     -1,  ]
+         - [    0,      0,      1,  ]
+         - [    0,      1,      0,  ]
+      4:
+         - [    0,      0,      1,  ]
+         - [   -1,     -1,     -1,  ]
+         - [    1,      0,      0,  ]
+      5:
+         - [    0,     -1,      0,  ]
+         - [   -1,      0,      0,  ]
+         - [    0,      0,     -1,  ]
+      6:
+         - [   -1,      0,      0,  ]
+         - [    0,     -1,      0,  ]
+         - [    1,      1,      1,  ]
+      7:
+         - [    0,      0,     -1,  ]
+         - [    1,      1,      1,  ]
+         - [    0,     -1,      0,  ]
+      8:
+         - [    1,      1,      1,  ]
+         - [    0,      0,     -1,  ]
+         - [   -1,      0,      0,  ]
+      9:
+         - [   -1,      0,      0,  ]
+         - [    0,      0,     -1,  ]
+         - [    0,     -1,      0,  ]
+      10:
+         - [    1,      1,      1,  ]
+         - [    0,     -1,      0,  ]
+         - [    0,      0,     -1,  ]
+      11:
+         - [    0,     -1,      0,  ]
+         - [    1,      1,      1,  ]
+         - [   -1,      0,      0,  ]
+      12:
+         - [    0,      0,     -1,  ]
+         - [   -1,      0,      0,  ]
+         - [    1,      1,      1,  ]
+      13:
+         - [   -1,      0,      0,  ]
+         - [    1,      1,      1,  ]
+         - [    0,      0,     -1,  ]
+      14:
+         - [    0,      0,     -1,  ]
+         - [    0,     -1,      0,  ]
+         - [   -1,      0,      0,  ]
+      15:
+         - [    0,     -1,      0,  ]
+         - [    0,      0,     -1,  ]
+         - [    1,      1,      1,  ]
+      16:
+         - [    1,      1,      1,  ]
+         - [   -1,      0,      0,  ]
+         - [    0,     -1,      0,  ]
+      17:
+         - [   -1,     -1,     -1,  ]
+         - [    0,      1,      0,  ]
+         - [    1,      0,      0,  ]
+      18:
+         - [    0,      0,      1,  ]
+         - [    1,      0,      0,  ]
+         - [    0,      1,      0,  ]
+      19:
+         - [    1,      0,      0,  ]
+         - [    0,      0,      1,  ]
+         - [   -1,     -1,     -1,  ]
+      20:
+         - [    0,      1,      0,  ]
+         - [   -1,     -1,     -1,  ]
+         - [    0,      0,      1,  ]
+      21:
+         - [    0,      0,      1,  ]
+         - [    0,      1,      0,  ]
+         - [   -1,     -1,     -1,  ]
+      22:
+         - [   -1,     -1,     -1,  ]
+         - [    1,      0,      0,  ]
+         - [    0,      0,      1,  ]
+      23:
+         - [    0,      1,      0,  ]
+         - [    0,      0,      1,  ]
+         - [    1,      0,      0,  ]
+      24:
+         - [    1,      0,      0,  ]
+         - [   -1,     -1,     -1,  ]
+         - [    0,      1,      0,  ]
+      25:
+         - [   -1,      0,      0,  ]
+         - [    0,     -1,      0,  ]
+         - [    0,      0,     -1,  ]
+      26:
+         - [    0,     -1,      0,  ]
+         - [   -1,      0,      0,  ]
+         - [    1,      1,      1,  ]
+      27:
+         - [    1,      1,      1,  ]
+         - [    0,      0,     -1,  ]
+         - [    0,     -1,      0,  ]
+      28:
+         - [    0,      0,     -1,  ]
+         - [    1,      1,      1,  ]
+         - [   -1,      0,      0,  ]
+      29:
+         - [    0,      1,      0,  ]
+         - [    1,      0,      0,  ]
+         - [    0,      0,      1,  ]
+      30:
+         - [    1,      0,      0,  ]
+         - [    0,      1,      0,  ]
+         - [   -1,     -1,     -1,  ]
+      31:
+         - [    0,      0,      1,  ]
+         - [   -1,     -1,     -1,  ]
+         - [    0,      1,      0,  ]
+      32:
+         - [   -1,     -1,     -1,  ]
+         - [    0,      0,      1,  ]
+         - [    1,      0,      0,  ]
+      33:
+         - [    1,      0,      0,  ]
+         - [    0,      0,      1,  ]
+         - [    0,      1,      0,  ]
+      34:
+         - [   -1,     -1,     -1,  ]
+         - [    0,      1,      0,  ]
+         - [    0,      0,      1,  ]
+      35:
+         - [    0,      1,      0,  ]
+         - [   -1,     -1,     -1,  ]
+         - [    1,      0,      0,  ]
+      36:
+         - [    0,      0,      1,  ]
+         - [    1,      0,      0,  ]
+         - [   -1,     -1,     -1,  ]
+      37:
+         - [    1,      0,      0,  ]
+         - [   -1,     -1,     -1,  ]
+         - [    0,      0,      1,  ]
+      38:
+         - [    0,      0,      1,  ]
+         - [    0,      1,      0,  ]
+         - [    1,      0,      0,  ]
+      39:
+         - [    0,      1,      0,  ]
+         - [    0,      0,      1,  ]
+         - [   -1,     -1,     -1,  ]
+      40:
+         - [   -1,     -1,     -1,  ]
+         - [    1,      0,      0,  ]
+         - [    0,      1,      0,  ]
+      41:
+         - [    1,      1,      1,  ]
+         - [    0,     -1,      0,  ]
+         - [   -1,      0,      0,  ]
+      42:
+         - [    0,      0,     -1,  ]
+         - [   -1,      0,      0,  ]
+         - [    0,     -1,      0,  ]
+      43:
+         - [   -1,      0,      0,  ]
+         - [    0,      0,     -1,  ]
+         - [    1,      1,      1,  ]
+      44:
+         - [    0,     -1,      0,  ]
+         - [    1,      1,      1,  ]
+         - [    0,      0,     -1,  ]
+      45:
+         - [    0,      0,     -1,  ]
+         - [    0,     -1,      0,  ]
+         - [    1,      1,      1,  ]
+      46:
+         - [    1,      1,      1,  ]
+         - [   -1,      0,      0,  ]
+         - [    0,      0,     -1,  ]
+      47:
+         - [    0,     -1,      0,  ]
+         - [    0,      0,     -1,  ]
+         - [   -1,      0,      0,  ]
+      48:
+         - [   -1,      0,      0,  ]
+         - [    1,      1,      1,  ]
+         - [    0,     -1,      0,  ]
+   kc dimensions:
+         - [      4,        4,        4,  ]
+   spinor:       True 
+   polar_alpha:           1.0000000000
+   epsil:
+   # a vector is a row
+         - [      7.37806414,       -0.00000000,       -0.00000000,  ]
+         - [     -0.00000000,        7.37806414,        0.00000000,  ]
+         - [     -0.00000000,       -0.00000000,        7.37806414,  ]
+   qc dimensions:
+         - [      4,        4,        4,  ]
+   mass:
+      -       10947.15628624
+      -       10947.15628624
+   mass units:       atomic
+   zstar:
+      1:
+         - [  -0.00000,    -0.00000,    -0.00000,  ]
+         - [  -0.00000,    -0.00000,     0.00000,  ]
+         - [  -0.00000,     0.00000,    -0.00000,  ]
+      2:
+         - [   0.00000,     0.00000,     0.00000,  ]
+         - [   0.00000,     0.00000,    -0.00000,  ]
+         - [   0.00000,    -0.00000,     0.00000,  ]
+   system_2d:       False
+   number of Wannier functions:               16
+   wannier_center:
+   # a vector is a row
+         - [   0.04133,     0.04133,     0.04133,  ]
+         - [   0.04133,     0.04133,     0.04133,  ]
+         - [   0.04133,    -0.04133,    -0.04133,  ]
+         - [   0.04133,    -0.04133,    -0.04133,  ]
+         - [  -0.04133,     0.04133,    -0.04133,  ]
+         - [  -0.04133,     0.04133,    -0.04133,  ]
+         - [  -0.04133,    -0.04133,     0.04133,  ]
+         - [  -0.04133,    -0.04133,     0.04133,  ]
+         - [   0.20867,     0.29133,     0.29133,  ]
+         - [   0.20867,     0.29133,     0.29133,  ]
+         - [   0.29133,     0.29133,     0.20867,  ]
+         - [   0.29133,     0.29133,     0.20867,  ]
+         - [   0.20867,     0.20867,     0.20867,  ]
+         - [   0.20867,     0.20867,     0.20867,  ]
+         - [   0.29133,     0.20867,     0.29133,  ]
+         - [   0.29133,     0.20867,     0.29133,  ]
+   wannier_center units: cartesian
+   wannier_center_cryst:
+   # a vector is a row
+         - [  -0.04133,     0.12398,    -0.04133,  ]
+         - [  -0.04133,     0.12398,    -0.04133,  ]
+         - [  -0.04133,    -0.04133,    -0.04133,  ]
+         - [  -0.04133,    -0.04133,    -0.04133,  ]
+         - [  -0.04133,    -0.04133,     0.12398,  ]
+         - [  -0.04133,    -0.04133,     0.12398,  ]
+         - [   0.12398,    -0.04133,    -0.04133,  ]
+         - [   0.12398,    -0.04133,    -0.04133,  ]
+         - [  -0.20867,     0.79133,    -0.20867,  ]
+         - [  -0.20867,     0.79133,    -0.20867,  ]
+         - [  -0.37398,     0.79133,    -0.20867,  ]
+         - [  -0.37398,     0.79133,    -0.20867,  ]
+         - [  -0.20867,     0.62602,    -0.20867,  ]
+         - [  -0.20867,     0.62602,    -0.20867,  ]
+         - [  -0.20867,     0.79133,    -0.37398,  ]
+         - [  -0.20867,     0.79133,    -0.37398,  ]
+   wannier_center_cryst units: crystal
+
+k-grid:
+   number of  tetrahedra selected:      47712
+   number of reducible k-points:      10812
+   number of irreducible k-points:        303
+
+
+spin lifetime:
+
+   temperature units: K
+
+   chemical potential units: eV
+
+   tau units: ns
+
+   # Configuration means one line in the temper file:
+   # temperature efermi concentration
+   number of configurations:   1
+
+   configuration index:
+
+      1:
+         temperature: 300.00
+         chemical potential:  17.38241
+         tau:  0.982669E+02
+
+memory:
+   physical: 527776696 kB                                                                    
+   max rss: 253072 kB                                                                       
+
+timings:
+
+   time units: s
+
+   PERTURBO:
+      cpu:         3.77295900
+      wall:        0.13628912
+      calls:         1
+...
