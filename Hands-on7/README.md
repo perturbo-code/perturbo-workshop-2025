@@ -39,8 +39,9 @@ Tip: You can run inside the official PERTURBO Docker image if preferred.
 ## Step 0 — Quick sanity check (provided data)
 Download the data and open docker in the corresponding folder. 
 ```
-docker run --rm -it -v /your_working_folder:/workspace -w /workspace perturbo/perturbo:gcc_mpi_3.0 bash
+docker run --rm -it -v /Users/yao/Desktop/worksop-2025:/workspace -w /workspace perturbo/perturbo:gcc_mpi_3.0 bash
 ```
+`/Users/yao/Desktop/worksop-2025` = your downloading folder. 
 
 - NSCF and Wannier data are provided under:
   - `example07-sto-tdep-sscha/pw-ph-wann/nscf`
