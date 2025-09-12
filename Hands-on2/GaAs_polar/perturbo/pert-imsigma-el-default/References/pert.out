@@ -1,0 +1,49 @@
+
+   Program PERTURBO starts on 12Sep2025 at  2:43:13 
+
+     Parallel version (MPI & OpenMP), running on      64 processor cores
+     Number of MPI processes:                64
+     Threads/MPI process:                     1
+
+     MPI processes distributed on     1 nodes
+
+     calc_mode = 'imsigma'
+     --------------------------------------------------
+     The gaas_epr.h5 HDF5 file was found and will be used in the calculation.
+
+     band_min:    5  band_max:    5
+     Reading list from file: gaas_tet.kpt
+     Total weight of the Cauchy sampling:  0.995701E+00
+     total number of k-points:         69
+     total number of q-points:    5000000
+    |--------------------------------------------------|
+     Im[Sigma]:                          
+           5.00%
+          10.00%
+          15.00%
+          20.00%
+          25.00%
+          30.00%
+          35.00%
+          40.00%
+          45.00%
+          50.00%
+          55.00%
+          60.00%
+          65.00%
+          70.00%
+          75.00%
+          79.99%
+          84.99%
+          89.99%
+          94.99%
+          99.99%
+         100.00%
+     >Im[Sigma] done.
+ 
+     PERTURBO     :   1m27.19s CPU   1m27.84s WALL
+
+     init_eph_wan :      0.01s CPU      0.09s WALL (       1 calls)
+     calc_selfel  :     86.71s CPU     87.02s WALL (       1 calls)
+
+   Program was terminated on:   2:44:41  12Sep2025             
