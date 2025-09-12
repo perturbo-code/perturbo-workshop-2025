@@ -37,6 +37,11 @@ Tip: You can run inside the official PERTURBO Docker image if preferred.
 
 
 ## Step 0 — Quick sanity check (provided data)
+Download the data and open docker in the corresponding folder. 
+```
+docker run --rm -it -v /your_working_folder:/workspace -w /workspace perturbo/perturbo:gcc_mpi_3.0 bash
+```
+
 - NSCF and Wannier data are provided under:
   - `example07-sto-tdep-sscha/pw-ph-wann/nscf`
   - `example07-sto-tdep-sscha/pw-ph-wann/wann`
@@ -44,6 +49,7 @@ Tip: You can run inside the official PERTURBO Docker image if preferred.
   - `example07-sto-tdep-sscha/pw-ph-wann/phonon/save`
 
 No need to re-run QE/DFPT/Wannier for this hands-on; we will reuse these.
+
 
 
 ## Step 1 — Build epr.h5 using DFPT phonons (baseline)
