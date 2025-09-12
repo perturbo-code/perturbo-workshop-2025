@@ -259,7 +259,7 @@ plt.rcParams.update(ppy.plot_tools.plotparams)
 fig, ax = plt.subplots()
 
 ph_files = ['sto-dfpt_phdisp.yml', 'sto-tdep_phdisp.yml', 'sto-sscha_phdisp.yml']
-colors   = ['tab:blue', 'tab:red', 'tab:orange']
+colors   = ['tab:blue', 'tab:red', 'tab:green']
 labels   = ['DFPT', 'TDEP', 'SSCHA']
 
 # Labels for a simple-cubic path G–X–M–G–R–X used in sto_phdisp.qpt
