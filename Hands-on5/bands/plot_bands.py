@@ -17,7 +17,7 @@ print(f'CBM = {CBM} eV')
 print(f'VBM = {VBM} eV')
 print(f'direct band gap is {bandgap_size} eV')
 
-emin_holes, emax_holes = 4.8, 5.3 # eV
+emin_holes, emax_holes = 4.9, 5.3 # eV
 emin_electrons, emax_electrons = 5.9, 6.7 # eV
 
 xmin, xmax = ax.get_xlim()

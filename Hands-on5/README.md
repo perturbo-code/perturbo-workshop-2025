@@ -1,5 +1,5 @@
-# Tutorial4 Ultrafast Carrier Dynamics
-#### last updated Sep 10
+# Tutorial5 Ultrafast Carrier Dynamics
+#### last updated Sep 12
 The following tutorial demonstrates the feature to simulate ultrafast carrier dynamics with PERTURBO by simulating a pump-probe spectroscopy experiment in GaAs.
 
 ## Description of the example problem ##
@@ -19,7 +19,7 @@ From $t=0$, we simulate the pump pulse by computing the additional excited elect
 
 The materials used in this tutorial can be found [here](https://github.com/perturbo-code/perturbo-workshop-2025/tree/main/Hands-on5), Hands-on5 of this workshop. The folder contains scripts `generate_pump_pulse.py`, `compute_trans_abs.py`, and `plot_trans_abs.py`, and `plot_bands.py`, `gaas_band.kpt` and `pert.in` in `bands` subdirectory. All the reference results can be found under `Refs` folder.
 
-The `gaas_epr.h5` file used in this tutorial can be found listed in the tutorial section [Ultrafast Spectroscopy](https://perturbo-code.github.io/mydoc_spectroscopy.html) on the PERTURBO website, with the direct box link to the folder for epr.h5 from [here](https://caltech.box.com/s/lco8rbeqyyav447x6gd43ztf2wn7skhp).
+[TODO will modify] `gaas_epr.h5` file used in this tutorial can be found [here](https://caltech.app.box.com/s/va0568719rn0y28j1s2mfk09ihw3buuj/folder/298661392249), with example input files from [Ultrafast Spectroscopy](https://perturbo-code.github.io/mydoc_spectroscopy.html).
 
 Download and move `gaas_epr.h5` into the directory `Hands-on5`.
 
@@ -30,7 +30,7 @@ Set up [docker environment](https://github.com/perturbo-code/perturbo-workshop-2
 
 ```bash
 docker run -v "$(PWD):/home/user/run/Hands-on5" -h perturbocker -it --rm --name perturbo perturbo/perturbo:gcc_openmp_3.0
-cd dynamics
+cd Hands-on5
 ```
 
 Then set OpenMP commands (if used)
@@ -79,6 +79,14 @@ Run `bands` calculation with the following input file `pert.in`
 perturbo.x -i pert.in | tee pert.out
 ```
 
+For faster performance with `perturbo.x` using MPI parallelization, try
+
+```bash
+mpirun -n 4 perturbo.x -npools 4 -i pert.in | tee pert.out
+```
+
+The number of `-npools` has to be the same as number of MPI tasks.
+
 We use `PerturboPy` package to visualize the electronic and hole bands stored in `gaas_bands.yml` by running the following Python script `plot_bands.py`. 
 
 ```python
@@ -101,7 +109,7 @@ print(f'CBM = {CBM} eV')
 print(f'VBM = {VBM} eV')
 print(f'direct band gap is {bandgap_size} eV')
 
-emin_holes, emax_holes = 4.8, 5.3 # eV
+emin_holes, emax_holes = 4.9, 5.3 # eV
 emin_electrons, emax_electrons = 5.9, 6.7 # eV
 
 xmin, xmax = ax.get_xlim()
@@ -153,9 +161,9 @@ Create a new input file `setup.in` from the [interative workflow](https://pertur
  
 
 ! ***Optional parameters***
- boltz_qdim(1)      = 30
- boltz_qdim(2)      = 30
- boltz_qdim(3)      = 30
+ boltz_qdim(1)      = 20
+ boltz_qdim(2)      = 20
+ boltz_qdim(3)      = 20
  hole               = .false.
  find_efermi        = .true.
  band_min           = 5
@@ -191,7 +199,7 @@ We similarly create the following `gaas.temper`
 
 In `setup.in`, we modify the band and energy windows as well as `hole = .true.`: 
 
-<pre>
+```
 &perturbo
 ! ***Mandatory parameters***
  calc_mode           = 'setup'
@@ -202,17 +210,17 @@ In `setup.in`, we modify the band and energy windows as well as `hole = .true.`:
  ftemper             = 'gaas.temper'
 
 ! ***Optional parameters***
- boltz_qdim(1)      = 30
- boltz_qdim(2)      = 30
- boltz_qdim(3)      = 30
- <span style="color: orange;">hole               = .true.</span>
+ boltz_qdim(1)      = 20
+ boltz_qdim(2)      = 20
+ boltz_qdim(3)      = 20
+ hole               = .true.
  find_efermi        = .true.
- <span style="color: orange;">band_min           = 2
+ band_min           = 2
  band_max           = 4
- boltz_emin         = 4.8         ! eV
- boltz_emax         = 5.3         ! eV</span>
+ boltz_emin         = 4.9         ! eV
+ boltz_emax         = 5.3         ! eV
 /
-</pre>
+```
 
 Note: 
   - We set the phonon q-grid `boltz_qdim` to be less than `boltz_kdim` for a faster calculation. One should confirm that the resulting dynamics converge with respect to these grid size settings. 
@@ -224,26 +232,6 @@ perturbo.x -i setup.in | tee setup.out
 ```
 
 ### Set initial carrier populations
----
->#### Initial populations at t = 0 as a defined distribution (no pump pulse)
->With `calc_mode = 'dynamics-run'`, one can specify a Fermi-Dirac distribution, a Gaussian or Lorentzian excitation at initial time t = 0 with the input parameters `boltz_init_dist`, `boltz_init_e0`, `boltz_init_smear` and `boltz_init_ampl`. 
->
->```
->&perturbo
-> calc_mode           = 'dynamics-run'
-> ...
-> boltz_init_dist     = 'fermi'
-> boltz_init_e0      = -4.2281057129   ! eV
-> boltz_init_smear   = 146.57          ! meV
-> boltz_init_ampl    = 1.0             !
-> ...
->```
->
->`boltz_init_ampl` is a new parameter in the PERTURBO v3.0 release that specifies a factor multiplied by initial distribution. No initial carrier distributions are generated with  `boltz_init_dist` if `boltz_init_ampl = 0`.
->
->For details, see PERTURBO website [tutorial](https://perturbo-code.github.io/mydoc_dynamics.html#zero-field-ultrafast-dynamicscalc_mode--dynamics-run) or past [workshop](https://github.com/perturbo-code/perturbo-workshop-2023/tree/main/Tutorial4) on ultrafast dynamics.
-
----
 
 #### Initial populations by a pump pulse (this example)
 
@@ -251,7 +239,7 @@ In this example, we specify initial populations with a pump pulse. We first run 
 
 In the `cdyna-elec` directory, we create a new input file `pulse.in` from the [interative workflow](https://perturbo-code.github.io/mydoc_interactive_workflow.html) for `dynamics-run`, and edit the input parameters.
 
-<pre>
+```
 &perturbo
 ! ***Mandatory parameters***
  calc_mode           = 'dynamics-run'
@@ -260,34 +248,34 @@ In the `cdyna-elec` directory, we create a new input file `pulse.in` from the [i
  boltz_kdim(2)       = 60
  boltz_kdim(3)       = 60
  ftemper             = 'gaas.temper'
- <span style="color: orange;">boltz_nstep         = 1
+ boltz_nstep         = 1
  output_nstep        = 1
- time_step           = 1.0             ! fs</span>
+ time_step           = 1.0             ! fs
  boltz_init_dist     = 'gaussian'
  scat_impl           = 'std'
 
 ! ***Optional parameters***
- <span style="color: orange;">solver             = 'rk4'</span>
+ solver             = 'rk4'
  boltz_init_e0      = -9999.0         ! eV
  boltz_init_smear   = 20.0            ! meV
- <span style="color: orange;">boltz_init_ampl    = 0.0             ! arbitrary
+ boltz_init_ampl    = 0.0             ! arbitrary
  delta_smear        = 8.0             ! meV
- phfreq_cutoff      = 1.0             ! meV</span>
- boltz_qdim(1)      = 30
- boltz_qdim(2)      = 30
- boltz_qdim(3)      = 30
+ phfreq_cutoff      = 1.0             ! meV
+ boltz_qdim(1)      = 20
+ boltz_qdim(2)      = 20
+ boltz_qdim(3)      = 20
  hole               = .false.
  band_min           = 5
  band_max           = 5
  boltz_emin         = 5.9             ! eV
  boltz_emax         = 6.7             ! eV
  load_scatter_eph   = .false.
- <span style="color: orange;">tmp_dir            = './tmp'
- pump_pulse         = .false.</span>
+ tmp_dir            = './tmp'
+ pump_pulse         = .false.
  pump_pulse_fname   = 'pump_pulse.h5'
- <span style="color: orange;">yaml_fname = 'gaas_dyna_init.yml'</span>
+ yaml_fname = 'gaas_dyna_init.yml'
 /
-</pre>
+```
 
 Note:
   - The energy and band window should be the same as that in `calc_mode = 'setup'` calculation done earlier.
@@ -313,7 +301,7 @@ vim gaas_dyna_init.yml
 
 Similarly, we perform the initial dynamics for holes in the `cdyna-hole` directory with `pulse.in` slightly changed from that for electrons:
 
-<pre>
+'''
 &perturbo
 ! ***Mandatory parameters***
  calc_mode           = 'dynamics-run'
@@ -335,21 +323,21 @@ Similarly, we perform the initial dynamics for holes in the `cdyna-hole` directo
  boltz_init_ampl    = 0.0             ! arbitrary
  delta_smear        = 8.0             ! meV
  phfreq_cutoff      = 1.0             ! meV
- boltz_qdim(1)      = 30
- boltz_qdim(2)      = 30
- boltz_qdim(3)      = 30
- <span style="color: orange;">hole               = .true.
+ boltz_qdim(1)      = 20
+ boltz_qdim(2)      = 20
+ boltz_qdim(3)      = 20
+ hole               = .true.
  band_min           = 2
  band_max           = 4
- boltz_emin         = 4.8         ! eV
- boltz_emax         = 5.3         ! eV</span>
+ boltz_emin         = 4.9         ! eV
+ boltz_emax         = 5.3         ! eV
  load_scatter_eph   = .false.
  tmp_dir            = './tmp'
  pump_pulse         = .false.
  pump_pulse_fname   = 'pump_pulse.h5'
  yaml_fname = 'gaas_dyna_init.yml'
 /
-</pre>
+'''
 
 ```bash
 perturbo.x -i pulse.in | tee pulse.out
@@ -468,25 +456,25 @@ vim pp.in
 ```
 
 `pp.in` contains the following for electrons, 
-<pre>
+```
 &perturbo
- <span style="color: orange;">calc_mode           = 'dynamics-pp'</span>
+ calc_mode           = 'dynamics-pp'
  prefix              = 'gaas'
  boltz_kdim(1)       = 60
  boltz_kdim(2)       = 60
  boltz_kdim(3)       = 60
  ftemper             = 'gaas.temper'
- boltz_qdim(1)      = 30
- boltz_qdim(2)      = 30
- boltz_qdim(3)      = 30
+ boltz_qdim(1)      = 20
+ boltz_qdim(2)      = 20
+ boltz_qdim(3)      = 20
  hole               = .false.
  band_min           = 5
  band_max           = 5
  boltz_emin         = 5.9             ! eV
  boltz_emax         = 6.7             ! eV
- <span style="color: orange;">boltz_de 	    = 1 	      ! meV</span>
+ boltz_de 	    = 1 	      ! meV
 /
-</pre>
+```
 
 `boltz_de` specifies the grid size in meV for tetrahedron integration over carrier energy.
 
@@ -551,34 +539,6 @@ In `dyna.in`, similarly modify the following inputs
 ```bash
 perturbo.x -i dyna.in | tee dyna.out
 ```
-
-### Post-processing with dynamics-pp
-
->Create a new input file `pp.in` from the [interative workflow](https://perturbo-code.github.io/mydoc_interactive_workflow.html). Alternatively, one can save time by copying the input file `dyna.in` and editing the corresponding parameters. In this case, one needs to change `calc_mode` to `'dynamics-pp'`. 
-><pre>
->&perturbo
-> <span style="color: orange;">calc_mode           = 'dynamics-pp'</span>
-> prefix              = 'gaas'
-> boltz_kdim(1)       = 60
-> boltz_kdim(2)       = 60
-> boltz_kdim(3)       = 60
-> ftemper             = 'gaas.temper'
-> boltz_qdim(1)      = 30
-> boltz_qdim(2)      = 30
-> boltz_qdim(3)      = 30
-> hole               = .false.
-> band_min           = 5
-> band_max           = 5
-> boltz_emin         = 5.9             ! eV
-> boltz_emax         = 6.7             ! eV
-> <span style="color: orange;">boltz_de 	    = 1 	      ! meV</span>
->/
-></pre>
->
->Run post-processing calculation
->```bash
->perturbo.x -i pp.in | tee pp.out
->```
 
 ### Result analysis with Perturbopy
 
@@ -657,6 +617,56 @@ So Docker is just the name of the software that allows you to use things called 
 
 #TODO!!! show converged results
 
+<!-- 
+### Post-processing with dynamics-pp
+
+>Create a new input file `pp.in` from the [interative workflow](https://perturbo-code.github.io/mydoc_interactive_workflow.html). Alternatively, one can save time by copying the input file `dyna.in` and editing the corresponding parameters. In this case, one needs to change `calc_mode` to `'dynamics-pp'`. 
+>```
+>&perturbo
+> calc_mode           = 'dynamics-pp'
+> prefix              = 'gaas'
+> boltz_kdim(1)       = 60
+> boltz_kdim(2)       = 60
+> boltz_kdim(3)       = 60
+> ftemper             = 'gaas.temper'
+> boltz_qdim(1)      = 20
+> boltz_qdim(2)      = 20
+> boltz_qdim(3)      = 20
+> hole               = .false.
+> band_min           = 5
+> band_max           = 5
+> boltz_emin         = 5.9             ! eV
+> boltz_emax         = 6.7             ! eV
+> boltz_de 	    = 1 	      ! meV
+>/
+>```
+>
+>Run post-processing calculation
+>```bash
+>perturbo.x -i pp.in | tee pp.out
+>```
+-->
+
+---
+>#### Initial populations at t = 0 as a defined distribution (no pump pulse)
+>With `calc_mode = 'dynamics-run'`, one can specify a Fermi-Dirac distribution, a Gaussian or Lorentzian excitation at initial time t = 0 with the input parameters `boltz_init_dist`, `boltz_init_e0`, `boltz_init_smear` and `boltz_init_ampl`. 
+>
+>```
+>&perturbo
+> calc_mode           = 'dynamics-run'
+> ...
+> boltz_init_dist     = 'fermi'
+> boltz_init_e0      = -4.2281057129   ! eV
+> boltz_init_smear   = 146.57          ! meV
+> boltz_init_ampl    = 1.0             !
+> ...
+>```
+>
+>`boltz_init_ampl` is a new parameter in the PERTURBO v3.0 release that specifies a factor multiplied by initial distribution. No initial carrier distributions are generated with  `boltz_init_dist` if `boltz_init_ampl = 0`.
+>
+>For details, see PERTURBO website [tutorial](https://perturbo-code.github.io/mydoc_dynamics.html#zero-field-ultrafast-dynamicscalc_mode--dynamics-run) or past [workshop](https://github.com/perturbo-code/perturbo-workshop-2023/tree/main/Tutorial4) on ultrafast dynamics.
+
+---
 
 ### Additional Resources
 To explore more features of ultrafast dynamics, refer to PERTURBO tutorials on [Ultrafast dynamics](https://perturbo-code.github.io/mydoc_dynamics.html#zero-field-ultrafast-dynamicscalc_mode--dynamics-run) and [Ultrafast spectroscopy](https://perturbo-code.github.io/mydoc_spectroscopy.html).
