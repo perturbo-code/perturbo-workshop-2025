@@ -4,11 +4,23 @@
 
 The first and crucial step in the Perturbo workflow is generating the `epr.h5` file. This file contains the electron-phonon (e-ph) matrix elements on coarse Brillouin zone grids for both electrons (**k**-points) and phonons (**q**-points), represented in the Wannier function basis. The `qe2pert.x` interface program reads DFPT results from Quantum ESPRESSO and the unitary transformation matrices (*U* matrices) from Wannier90 to create this HDF5 format file.
 
+To start, let us activate the dockerized Perturbo with:
+```bash
+docker run -v /path/to/your/Hands-on3:/home/user/run/Hands_on3 --user 500 -it --rm --name perturbo perturbo/perturbo:gcc_openmp_3.0
+
+# Use 4-threads with OpenMP:
+export OMP_NUM_THREADS=4
+```
+Here I am using the serial with OpenMP version but you are welcome to use the others.
+
 ## Workflow for Polar Material: GaAs
 
 ### Step 1: Ground-state DFT Calculation
 
 ```bash
+# First, locate the /pw-ph-wann/scf/ directory
+cd /Hands-on3/GaAs_polar/pw-ph-wann/scf/
+
 pw.x -in scf.in > scf.out
 ```
 
@@ -17,6 +29,8 @@ This performs a self-consistent field (SCF) calculation to obtain the equilibriu
 ### Step 2: Phonon Calculation with DFPT
 
 ```bash
+# Now we go to ../ph/
+cd /Hands-on3/GaAs_polar/pw-ph-wann/ph/
 ph.x -in ph.in > ph.out
 
 # Collect the dfpt data to save/
@@ -29,6 +43,9 @@ In this step, we calculate the phonon frequencies and eigenvectors using Density
 ### Step 3: Non-self-consistent Calculation on Dense k-grid
 
 ```bash
+# Next, we go to the ../nscf/ directory to compute the WFs for Wannier90
+cd /Hands-on3/GaAs_polar/pw-ph-wann/nscf/
+
 pw.x -in nscf.in > nscf.out
 ```
 
@@ -38,7 +55,9 @@ This non-self-consistent calculation computes electronic states on a denser k-po
 
 ```bash
 wannier90-3.1.0/wannier90.x -pp gaas.win
+
 pw2wannier90.x -inp pw2wan.in > pw2wan.out
+
 wannier90-3.1.0/wannier90.x gaas.win
 ```
 
@@ -47,6 +66,11 @@ wannier90-3.1.0/wannier90.x gaas.win
 - **Third line**: Performs the actual Wannierization, creating maximally localized Wannier functions and the transformation matrices needed for interpolation
 
 ### Step 5: Generate the EPR File
+
+```bash
+qe2pert.x -in qe2pert.in > qe2pert.out
+```
+or with in parallel with `mpirun`:
 
 ```bash
 mpirun -n 4 qe2pert.x -npools 4 -in qe2pert.in > qe2pert.out
@@ -59,7 +83,7 @@ This crucial step reads:
 
 And produces the `<prefix>_epr.h5` file containing e-ph matrix elements in the Wannier basis. 
 
-⚠️ **Important:** The number of MPI tasks must equal the number of pools or the calculation will fail.
+⚠️ **Important:** If you run with `mpirun`, the number of MPI tasks must equal the number of pools or the calculation will fail.
 
 ### Step 6: Run Perturbo Calculations
 
@@ -70,6 +94,10 @@ Before running any calculations with `perturbo.x`, link the EPR file to your wor
 ln -sf /path/to/<prefix>_epr.h5 .
 
 # Then run perturbo
+perturbo.x -npools 4 -in pert.in > pert.out
+```
+or in parallel:
+```bash
 mpirun -n 4 perturbo.x -npools 4 -in pert.in > pert.out
 ```
 
@@ -138,7 +166,7 @@ cp <prefix>_qtensor.h5 /path/to/qe2pert/directory/
 Now, run `qe2pert.x` normally as above. The code will automatically detect this file and apply quadrupole correction to the eph calculations when generating the `epr.h5` file.
 
 ```bash
-mpirun -n 4 qe2pert.x -npools 4 -in qe2pert.in > qe2pert.out
+qe2pert.x -in qe2pert.in > qe2pert.out
 ```
 
 You can verify that quadrupole corrections were applied by checking the `qe2pert.out` file for messages indicating that the quadrupole tensor file was successfully read and processed.
