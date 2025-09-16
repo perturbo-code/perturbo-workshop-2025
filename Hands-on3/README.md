@@ -7,7 +7,7 @@ The first and crucial step in the Perturbo workflow is generating the `epr.h5` f
 To start, let us activate the dockerized Perturbo with:
 
 ```bash
-docker run -v /path/to/your/Hands-on3:/home/user/run/Hands_on3 --user 500 -it --rm --name perturbo perturbo/perturbo:gcc_openmp_3.0
+docker run -v /path/to/your/Hands-on3:/home/user/run/Hands-on3 --user 500 -it --rm --name perturbo perturbo/perturbo:gcc_openmp_3.0
 
 # Use 4 OMP threads:
 export OMP_NUM_THREADS=4 
