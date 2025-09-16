@@ -67,7 +67,7 @@ This non-self-consistent calculation computes electronic states on a denser k-po
 
 ### Step 4: Wannierization
 First, we link the previous `nscf/tmp/<prefix>.save` directory to the `wann`:
-```
+```bash
 cd ../wann/
 
 mkdir tmp
