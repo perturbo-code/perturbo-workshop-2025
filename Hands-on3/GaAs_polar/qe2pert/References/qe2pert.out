@@ -1,0 +1,86 @@
+
+   Program QE2PERT starts on 16Sep2025 at  6:37:25 
+
+     Serial multi-threaded version (OpenMP), running on    4 processor cores
+
+     Reading xml data from directory:
+
+     ./tmp/gaas.save/
+
+     IMPORTANT: XC functional enforced from input :
+     Exchange-correlation= PZ
+                           (   1   1   0   0   0   0   0)
+     Any further DFT definition will be discarded
+     Please, verify this is what you really want
+
+
+     G-vector sticks info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Sum        1099    1099    337                23973    23973    4015
+
+     Using Slab Decomposition
+
+
+     QE2PERT  
+     ---------------------------
+     Spin unpolorized
+     NC pseudopotentials
+     ---------------------------
+
+
+     reading grid info from file ../pw-ph-wann/ph/save/gaas.dyn0
+  reading force constants from file ../pw-ph-wann/ph/save/gaas.dyn1.xml
+Norm of the difference between old and new effective charges:    0.27205709331146599173
+  nqs=            1
+ q=   0.00000000  0.00000000  0.00000000
+  reading force constants from file ../pw-ph-wann/ph/save/gaas.dyn2.xml
+  nqs=            4
+ q=   0.50000000 -0.50000000  0.50000000
+ q=  -0.50000000  0.50000000  0.50000000
+ q=   0.50000000  0.50000000 -0.50000000
+ q=  -0.50000000 -0.50000000 -0.50000000
+  reading force constants from file ../pw-ph-wann/ph/save/gaas.dyn3.xml
+  nqs=            3
+ q=   0.00000000 -1.00000000  0.00000000
+ q=   0.00000000  0.00000000 -1.00000000
+ q=  -1.00000000  0.00000000  0.00000000
+
+      q-space grid ok, #points =    8
+     Symmetries of bravais lattice:  48
+     Symmetries of crystal:          24
+ end lattice
+ Norm of the difference between old and new effective charges:    0.00000000000000049651
+
+ Norm of the difference between old and new force-constants:   0.00067925820455793848
+
+     saved electron and phonon data to file.
+start elph_matrix:
+irreducible q:   1    0.00000000  0.00000000  0.00000000
+  progress:    6.25%
+  progress:   12.50%
+     Message from routine init_vloc:
+     Interpolation table for Vloc re-allocated
+irreducible q:   2    0.50000000 -0.50000000  0.50000000
+  progress:   18.75%
+  progress:   25.00%
+  progress:   31.25%
+  progress:   37.50%
+  progress:   43.75%
+  progress:   50.00%
+  progress:   56.25%
+  progress:   62.50%
+irreducible q:   3    0.00000000 -1.00000000  0.00000000
+  progress:   68.75%
+  progress:   75.00%
+  progress:   81.25%
+  progress:   87.50%
+  progress:   93.75%
+  progress:  100.00%
+     collecting electron-phonon matrix...
+     computing electron-phonon matrix in wannier basis...
+
+     QE2PERT      :   2m 4.56s CPU     32.07s WALL
+
+
+   Program was terminated on:   6:37:57  16Sep2025             
