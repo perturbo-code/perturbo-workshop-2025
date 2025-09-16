@@ -5,13 +5,14 @@
 The first and crucial step in the Perturbo workflow is generating the `epr.h5` file. This file contains the electron-phonon (e-ph) matrix elements on coarse Brillouin zone grids for both electrons (**k**-points) and phonons (**q**-points), represented in the Wannier function basis. The `qe2pert.x` interface program reads DFPT results from Quantum ESPRESSO and the unitary transformation matrices (*U* matrices) from Wannier90 to create this HDF5 format file.
 
 To start, let us activate the dockerized Perturbo with:
+
 ```bash
 docker run -v /path/to/your/Hands-on3:/home/user/run/Hands_on3 --user 500 -it --rm --name perturbo perturbo/perturbo:gcc_openmp_3.0
 
-# Use 4-threads with OpenMP:
-export OMP_NUM_THREADS=4
+# Use 4 OMP threads:
+export OMP_NUM_THREADS=4 
 ```
-Here I am using the serial with OpenMP version but you are welcome to use the others.
+Here I will be using the serial with OpenMP Docker version of Perturbo, but you are welcome to use the others.
 
 ## Workflow for Polar Material: GaAs
 
@@ -24,21 +25,23 @@ cd /Hands-on3/GaAs_polar/pw-ph-wann/scf/
 pw.x -in scf.in > scf.out
 ```
 
-This performs a self-consistent field (SCF) calculation to obtain the equilibrium charge density and Kohn-Sham wavefunctions, which form the foundation for all subsequent calculations.
+This performs a self-consistent field (SCF) calculation to obtain the equilibrium charge density for DFPT.
 
 ### Step 2: Phonon Calculation with DFPT
 
 ```bash
 # Now we go to ../ph/
 cd /Hands-on3/GaAs_polar/pw-ph-wann/ph/
+
 ph.x -in ph.in > ph.out
 
 # Collect the dfpt data to save/
 sh ph-collect.sh
-
 ```
 
 In this step, we calculate the phonon frequencies and eigenvectors using Density Functional Perturbation Theory.
+
+⚠️ **Note:** If you are using the parallel version, you may need to modify `ph-collect.sh` by changing all the file extension `*.dvscf` to `*.dvscf1`.
 
 ### Step 3: Non-self-consistent Calculation on Dense k-grid
 
@@ -50,6 +53,10 @@ pw.x -in nscf.in > nscf.out
 ```
 
 This non-self-consistent calculation computes electronic states on a denser k-point grid needed for Wannierization. The dense grid ensures accurate interpolation of electronic properties when constructing Wannier functions.
+
+⚠️ **Note:**
+- The full BZ grid must be provided to the input files. In this examples, we used the Wannier90's `kmesh.pl` utilities to generate the grid.
+- In the following Wannierization step, you also need to use the exact same grid.
 
 ### Step 4: Wannierization Process
 
@@ -66,8 +73,10 @@ wannier90-3.1.0/wannier90.x gaas.win
 - **Third line**: Performs the actual Wannierization, creating maximally localized Wannier functions and the transformation matrices needed for interpolation
 
 ### Step 5: Generate the EPR File
+Run `qe2pert.x`:
 
 ```bash
+cd ./qe2pert
 qe2pert.x -in qe2pert.in > qe2pert.out
 ```
 or with in parallel with `mpirun`:
@@ -76,7 +85,7 @@ or with in parallel with `mpirun`:
 mpirun -n 4 qe2pert.x -npools 4 -in qe2pert.in > qe2pert.out
 ```
 
-This crucial step reads:
+This very crucial step reads:
 - Electronic wavefunctions and energies from QE
 - Phonon perturbation potentials from DFPT
 - Wannier transformation matrices from Wannier90
@@ -87,17 +96,19 @@ And produces the `<prefix>_epr.h5` file containing e-ph matrix elements in the W
 
 ### Step 6: Run Perturbo Calculations
 
-Before running any calculations with `perturbo.x`, link the EPR file to your working directory:
+Before running any calculations with `perturbo.x`, make sure link or copy the EPR file to your working directory:
 
 ```bash
 # Link the epr file to your working directory
 ln -sf /path/to/<prefix>_epr.h5 .
 
 # Then run perturbo
-perturbo.x -npools 4 -in pert.in > pert.out
+perturbo.x -in pert.in > pert.out
 ```
 or in parallel:
+
 ```bash
+# npools must be equal to ntasks
 mpirun -n 4 perturbo.x -npools 4 -in pert.in > pert.out
 ```
 
@@ -125,15 +136,32 @@ For detailed instructions on setting up these calculations, please visit the [AB
 
 The ABINIT calculation will produce output files containing the quadrupole tensor elements. In this example, we will use the file named `tlw_3.abo` as the output for demo. This file contains the matrix elements needed to correct the electron-phonon coupling for quadrupole effects.
 
-⚠️ **Note:** You can peak in to read the file, but make sure not to edit it or error may occur.
+⚠️ **Note:** You open the file to read, but make sure not to edit it or error may occur.
 
 ### Step 2: Extract Quadrupole Tensors from ABINIT Output
+Pick either method A or B below that apply to you.
 
+### Version A: If you only have `hdf5` (which is true if you are running Perturbocker):
+
+```bash
+cd ./qtensor/qtensor-utils/
+
+# Compile the "qtensor_hdf5.f90" version using the h5fc wrapper:
+/opt/hdf5/bin/h5fc -o qtensor qtensor_hdf5.f90
+
+# Run qtensor in the same directory as your ABINIT output
+cd ../
+
+./qtensor-utils/qtensor
+
+# Enter the file name "tlw_3.abo"
+```
+
+### Version B: If you know you have `h5fortran` library installed:
 Navigate to the `qtensor` folder and modify the `Makefile` to match your system configuration.
 
 ```makefile
-# Change to gfortran if you compile in serial
-# This code does not use mpi anyway
+# Change to gfortran/mpif90 depending on your HDF5
 FC = mpifort
 
 # Set the path to your HDF5 installation
@@ -148,11 +176,16 @@ Once you've configured the Makefile, compile and run the `qtensor` extraction to
 make
 
 # Run qtensor in the same directory as your ABINIT output
+cd ../
+
 ./qtensor
+
+# Enter the file name (tlw_3.abo)
 ```
 
-The `qtensor` utility must be executed in the same directory as your ABINIT output file (`tlw_3.abo`). It will parse the ABINIT output and extract the quadrupole tensor elements.
-After this, you should obtain the file `qtensor.h5`. Next, rename this file and copy to where you would run `qe2pert.x`.
+Note that he `qtensor` utility must be executed in the same directory as your ABINIT output file (`tlw_3.abo`). It will parse the ABINIT output and extract the quadrupole tensor elements.
+
+After this, you should obtain the file `qtensor.h5`. Now rename this file and copy to where you would run `qe2pert.x`.
 
 ```bash
 # Rename the file to match your calculation prefix
