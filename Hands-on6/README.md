@@ -2,12 +2,28 @@
 
 ## Introduction
 
-This hands-on session will show how to computer spin relaxation times using PERTURBO. We will be running calculations on diamond with fully-relativistic pseudopotentials.
+This hands-on session will show how to compute spin relaxation times using PERTURBO. We will be running calculations on diamond with fully-relativistic pseudopotentials.
 
-The epr.h5 file must be generated with fully-relativistic pseudopotentials, spin-orbit coupling, and noncollinear magnetism. There are additional spinor-related flags that need to be specified in the scf, nscf, and Wannier90 calculations. We will provide the inputs along with the final `diam_epr.h5` file.
+The materials used in this tutorial can be found at this box [link](https://caltech.box.com/s/ue5pcts8vmbhp5ko1arxdantxm2luagu) or in the Hands-on6 folder of the [github repository](https://github.com/perturbo-code/perturbo-workshop-2025/tree/main/Hands-on6).
 
+## Setting the Docker environment
 
-## Generate epr.h5
+Similar to the previous Hands-on tutorials, we will be using the [docker environment](https://github.com/perturbo-code/perturbo-workshop-2025/tree/main/Hands-on1) for PERTURBO.
+
+```bash
+docker run -v "$(PWD):/home/user/run/workshop2025" -h perturbocker -it --rm --name perturbo perturbo/perturbo:gcc_openmp_3.0
+cd Hands-on6
+```
+
+Then set OpenMP commands (if used)
+```bash
+export OMP_NUM_THREADS=4
+```
+
+## Option 1: Generate the epr.h5 from inputs
+### SCF/NSCF/Wannier90 workflow
+
+The epr.h5 file must be generated with fully-relativistic pseudopotentials, spin-orbit coupling, and noncollinear magnetism. There are additional spinor-related flags that need to be specified in the scf, nscf, and Wannier90 calculations.
 
 The workflow for generating the epr.h5 file is the same as shown in earlier hands-on tutorials. The inputs include the required spinor-related variables and are provided at this box [link](https://caltech.box.com/s/5n47c18v0xetp2xltixvt5fvsdpon66n). 
 
@@ -15,11 +31,12 @@ Some comments about the workflow:
 * Fully-relativistic pseudopotentials must be used
 * In the SCF step, `noncolin` and `lspinorb` flags must be set to `.true.`
 * In the NSCF step, `noncolin` and `lspinorb` flags must be set to `.true.`
+* In the phonon step, there are no additional spinor-related variables specified.
 * In the Wannier90 step, `spinors` flag must be `.true.` (in the **diam.win** input file) and `write_spn` flag must be `.true.` (in the **pw2wan.in** input file)
 
 Note, the Wannier90 calculation flag `write_spn = .true.` will generate the **diam.spn** file. This file is required in the qe2pert step.
 
-### qe2pert
+### Running qe2pert
 
 Once the scf, nscf, Wannier90, and phonon calculations are complete, we run `qe2pert.x` to generate the **diam_epr.h5** file. The inputs can be found at this [link](https://caltech.box.com/s/clbiusws5uox5ltyjxzrd0bfacojk5pj).
 
@@ -60,24 +77,29 @@ ln -sf ../../pw-ph-wann/nscf/tmp/diam.xml
 ln -sf ../../pw-ph-wann/nscf/tmp/diam.save/
 ```
 
-Run `qe2pert.x`:
+Set OpenMP commands (if used) and run `qe2pert.x`:
 
 ```bash
 export OMP_NUM_THREADS=4
-mpirun -np 2 qe2pert.x -npools 2 -i qe2pert.in > qe2pert.out
+qe2pert.x -i qe2pert.in | tee qe2pert.out
+```
+
+For faster performance with `qe2pert.x` using MPI parallelization, try:
+```bash
+mpirun -n 2 qe2pert.x -npools 2 -i qe2pert.in | tee qe2pert.out
 ```
 
 Now, we can perform calculations using the **diam_epr.h5** file.
 
-## Access the existing epr file
+## Option 2: Download the existing epr file
 
 Instead of running the above steps, one can download the **diam_epr.h5** file from this [link](https://caltech.box.com/s/20dn5dbcl8koqiypxrc0mqifgezkijza).
 
-The **diam_epr.h5** file must be downloaded and placed in each folder with the calculations. Alternatively, one can place the **diam_epr.h5** in the `/diamond/perturbo/` folder and we will create soft links to this file.
+Download and move the **diam_epr.h5** file into the directory `/diamond/perturbo/`. We will create soft links to this file throughout the tutorial.
 
 ## E-ph spin-flip matrix elements
 
-The inputs can be found in the ephmat-spin directory:
+The inputs can be found in the `pert-ephmat-spin` directory:
 
 ```
 cd perturbo-workshop-2025/Hands-on6/diamond/perturbo/pert-ephmat-spin
@@ -110,7 +132,7 @@ ln -sf ../diam_epr.h5
 Now, we can run `perturbo.x`:
 
 ```bash
-mpirun -n 1 perturbo.x -npools 1 -i pert.in > pert.out 
+perturbo.x -i pert.in | tee pert.out 
 ```
 
 The calculation outputs 2 files - **diam.ephmat_flip** and **diam_ephmat_spin.yml**
@@ -150,7 +172,7 @@ ln -sf ../diam_epr.h5
 Run `perturbo.x`:
 
 ```bash
-mpirun -n 1 perturbo.x -npools 1 -i pert.in > pert.out 
+perturbo.x -i pert.in | tee pert.out 
 ```
 
 The calculation outputs 2 files - **diam.spins** and **diam_spins.yml**
@@ -180,21 +202,21 @@ Here is the input file (**pert.in**):
 
 ```
 &perturbo
- prefix = 'diam'
- calc_mode = 'setup'
+ prefix      = 'diam'
+ calc_mode   = 'setup'
 
- fklist = 'diam_tet.kpt'     !kpt file from setup calculation
- ftemper = 'diam.temper'
+ boltz_kdim(1) = 80   !kgrid along three crystal axes
+ boltz_kdim(2) = 80
+ boltz_kdim(3) = 80
 
- band_min = 10
- band_max = 11
+ boltz_emin = 17.3  !Energy window
+ boltz_emax = 17.7  !Energy window
+ band_min = 9      !Band index
+ band_max = 10
 
- phfreq_cutoff = 3           ! meV !Phonon frequency cutoff
- delta_smear = 20            ! meV      !Smearing value
-
- sampling = 'uniform'        !Type of q-point sampling
- nsamples = 1000000          !Number of q-points
- /
+ find_efermi = .true.
+ ftemper  = 'diam.temper' !Name of .temper file
+/
 ```
 
 The **diam.temper** file contains information about temperature, chemical potential, and carrier concentration.
@@ -208,7 +230,7 @@ ln -sf ../diam_epr.h5
 Now, we can run `perturbo.x`:
 
 ```bash
-mpirun -n 1 perturbo.x -npools 1 -i pert.in > pert.out 
+perturbo.x -i pert.in | tee pert.out 
 ```
 
 The `'setup'` calculation takes the information about the grid, energy window, temperature and fermi level, and outputs 4 files - **diam_tet.h5**, **diam_tet.kpt**, **diam.doping**, **diam.dos** and **diam_setup.yml**
@@ -246,7 +268,7 @@ Here is the input file (**pert.in**):
  delta_smear = 20            ! meV      !Smearing value
 
  sampling = 'uniform'        !Type of q-point sampling
- nsamples = 1000000          !Number of q-points
+ nsamples = 10000          !Number of q-points
  /
 ```
 
@@ -267,10 +289,16 @@ Now, run `perturbo.x`:
 
 ```bash
 export OMP_NUM_THREADS=4
-mpirun -n 8 perturbo.x -npools 8 -i pert.in > pert.out
+perturbo.x -i pert.in | tee pert.out
 ```
 
-Note that this calculation can take some time (around 5-10 minutes). If you use OpenMP, the calculation will be much faster.
+The `'imsigma_spin'` calculation is the most expensive calculation in this tutorial. When executed serially, the calculation can take around 5-10 minutes. It's best to set OpenMP threads to the maximum number of cores in your machine. Note that this is not a completely converged calculation, as we have scaled down the parameters to reduce the computational cost.
+
+If you use MPI parallelization, the calculation will be much faster.
+
+```bash
+mpirun -n 8 perturbo.x -npools 8 -i pert.in | tee pert.out
+```
 
 The calculation outputs 5 files - **diam.imsigma**, **diam.imsigma_mode**, **diam.imsigma_flip**, **diam.imsigma_flip_mode**, and **diam_imsigma_spin.yml**
 - **diam.imsigma** contains $\mathrm{Im}\Sigma$ in meV as a function of carrier energies.
@@ -330,8 +358,7 @@ ln -sf ../diam_epr.h5
 Now, run `perturbo.x`:
 
 ```bash
-export OMP_NUM_THREADS=4
-mpirun -n 8 perturbo.x -npools 8 -i pert.in > pert.out
+perturbo.x -i pert.in | tee pert.out
 ```
 
 The calculation outputs 2 files - **diam.spin** and **diam_spinlifetime.yml**

@@ -13,5 +13,5 @@
 
   sampling = 'cauchy'             !Type of q-point sampling
   cauchy_scale = 1.0
-  nsamples = 100000               !Number of q-points
+  nsamples = 10000               !Number of q-points
  /
