@@ -1,5 +1,5 @@
-# Tutorial5 Ultrafast Carrier Dynamics
-#### last updated Sep 12
+# Hands-on Session 5 Ultrafast Carrier Dynamics
+
 The following tutorial demonstrates the feature to simulate ultrafast carrier dynamics with PERTURBO by simulating a pump-probe spectroscopy experiment in GaAs.
 
 ## Description of the example problem ##
@@ -618,7 +618,7 @@ python3 plot_trans_abs.py
 
 The grid sizes used in this example does not lead to a converged result. The following plot shows a converged result using `boltz_kdim(1) = boltz_kdim(2) = boltz_kdim(3) = 180` and `boltz_qdim(1) = boltz_qdim(2) = boltz_qdim(3) = 90` with the same `delta_smear` and `phfreq_cutoff` as in the example.
 
-![Transient Absorption](https://github.com/perturbo-code/perturbo-workshop-2025/blob/main/Hands-on5/images/converged_trans_abs.png)
+![Converged_absorption](https://github.com/perturbo-code/perturbo-workshop-2025/blob/main/Hands-on5/images/converged_trans_abs.png)
 
 ---
 >#### Initial populations at t = 0 as a defined distribution (no pump pulse)
