@@ -17,9 +17,9 @@ From $t=0$, we simulate the pump pulse by computing the additional excited elect
 
 ## Required files ##
 
-The materials used in this tutorial can be found [here](https://github.com/perturbo-code/perturbo-workshop-2025/tree/main/Hands-on5), Hands-on5 of this workshop. The folder contains scripts `generate_pump_pulse.py`, `compute_trans_abs.py`, and `plot_trans_abs.py`, and `plot_bands.py`, `gaas_band.kpt` and `pert.in` in `bands` subdirectory. All the reference results can be found under `Refs` folder.
+The materials used in this tutorial can be found [here](https://github.com/perturbo-code/perturbo-workshop-2025/tree/main/Hands-on5), Hands-on5 of this workshop. The folder contains scripts `generate_pump_pulse.py`, `compute_trans_abs.py`, and `plot_trans_abs.py`, and `plot_bands.py`, `gaas_band.kpt` and `pert.in` in `bands` subdirectory. To follow through the example with reference results, one can download the box folder [here](https://caltech.box.com/s/p42xq9w7p33z56k71kdfkv14xy6r8lo3).
 
-[TODO will modify] `gaas_epr.h5` file used in this tutorial can be found [here](https://caltech.app.box.com/s/va0568719rn0y28j1s2mfk09ihw3buuj/folder/298661392249), with example input files from [Ultrafast Spectroscopy](https://perturbo-code.github.io/mydoc_spectroscopy.html).
+`gaas_epr.h5` file used in this tutorial can be found [here](https://caltech.app.box.com/s/va0568719rn0y28j1s2mfk09ihw3buuj/folder/298661392249), with example input files from [Ultrafast Spectroscopy](https://perturbo-code.github.io/mydoc_spectroscopy.html).
 
 Download and move `gaas_epr.h5` into the directory `Hands-on5`.
 
@@ -49,7 +49,7 @@ We first need to run [bands](https://perturbo-code.github.io/mydoc_interpolation
 cd bands
 ```
 
-First, link `prefix_epr.h5` file.
+First, link `gaas_epr.h5` file.
 
 ```bash
 ln -sf ../gaas_epr.h5
@@ -147,7 +147,7 @@ First we create the `gaas.temper` file for a given carrier concentration and pho
 300.0     0.0     1.0E+13
 ```
 
-Create a new input file `setup.in` from the [interative workflow](https://perturbo-code.github.io/mydoc_interactive_workflow.html) for `setup`, copy the information into the input file `setup.in`, and edit the following input parameters with our desired `band_min`, `band_max`, `boltz_emin` and `boltz_emax`.
+Create a new input file `setup.in` from the [interative workflow](https://perturbo-code.github.io/mydoc_interactive_workflow.html) for `setup`, copy the information into the input file `setup.in`, and edit the following input parameters with our desired `band_min`, `band_max`, `boltz_emin` and `boltz_emax`. 
 
 ```bash=
 &perturbo
@@ -174,6 +174,8 @@ Create a new input file `setup.in` from the [interative workflow](https://pertur
 ```
 
 Set `find_efermi = .true.` to determine the chemical potential. Although, in `dynamics-run`, the only used variables in `prefix.temper` are the line number 1 and the phonon bath temperature.
+
+If parallelization is not available for running this example, use a smaller grid size, such as `boltz_kdim(1) = 24` and `boltz_qdim(1) = 12`. The workflow will run, although the results will not be physical.
 
 Run `setup` calculation
 ```bash
@@ -284,7 +286,8 @@ Note:
   - For this mock run, we also set `pump_pulse = .false.`
   - Since we are only using `gaas_cdyna.h5` for pump pulse input generation, we set `boltz_nstep = 1`.
 
-We run the mock dynamics, which is a relatively expensive calculation 
+We run the mock dynamics, which is a relatively expensive calculation. Parallelization is strongly recommended. Alternatively, one can also include the `tmp` folder under `Refs/cdyna-elec` and `Refs/cdyna-hole` from [here](https://caltech.box.com/s/p42xq9w7p33z56k71kdfkv14xy6r8lo3), use 1 MPI task, and set `load_scatter_eph = .true.` to skip part of the expensive calculation.
+
 ```bash
 perturbo.x -i pulse.in | tee pulse.out
 ```
@@ -301,7 +304,7 @@ vim gaas_dyna_init.yml
 
 Similarly, we perform the initial dynamics for holes in the `cdyna-hole` directory with `pulse.in` slightly changed from that for electrons:
 
-'''
+```
 &perturbo
 ! ***Mandatory parameters***
  calc_mode           = 'dynamics-run'
@@ -337,7 +340,7 @@ Similarly, we perform the initial dynamics for holes in the `cdyna-hole` directo
  pump_pulse_fname   = 'pump_pulse.h5'
  yaml_fname = 'gaas_dyna_init.yml'
 /
-'''
+```
 
 ```bash
 perturbo.x -i pulse.in | tee pulse.out
@@ -383,7 +386,7 @@ pump_spectral_width_fwhm = 0.09 # full width half maximum of spectral width in e
 pump_duration_fwhm = 20.0 	# full width half maximum of pump in fs
 pump_time_window = 50.0 	# duration of pulse in fs
 finite_width = True 		# specify a gaussian pulse; if false use step function
-tr_dipoles=None 		# transient dipole squared in .npy file
+tr_dipoles = None 		# transient dipole squared in .npy file
 ppy.utils.spectra_generate_pulse.setup_pump_pulse(
     elec_pump_pulse_path,
     hole_pump_pulse_path,
@@ -611,41 +614,11 @@ plt.savefig('transient_absorption_total.png', dpi=400)
 python3 plot_trans_abs.py
 ```
 
-So Docker is just the name of the software that allows you to use things called containers. Accordingly, we need to understand what containers are.
-
 ![Transient Absorption](https://github.com/perturbo-code/perturbo-workshop-2025/blob/main/Hands-on5/images/transient_absorption_total.png)
 
-#TODO!!! show converged results
+The grid sizes used in this example does not lead to a converged result. The following plot shows a converged result using `boltz_kdim(1) = boltz_kdim(2) = boltz_kdim(3) = 180` and `boltz_qdim(1) = boltz_qdim(2) = boltz_qdim(3) = 90` with the same `delta_smear` and `phfreq_cutoff` as in the example.
 
-<!-- 
-### Post-processing with dynamics-pp
-
->Create a new input file `pp.in` from the [interative workflow](https://perturbo-code.github.io/mydoc_interactive_workflow.html). Alternatively, one can save time by copying the input file `dyna.in` and editing the corresponding parameters. In this case, one needs to change `calc_mode` to `'dynamics-pp'`. 
->```
->&perturbo
-> calc_mode           = 'dynamics-pp'
-> prefix              = 'gaas'
-> boltz_kdim(1)       = 60
-> boltz_kdim(2)       = 60
-> boltz_kdim(3)       = 60
-> ftemper             = 'gaas.temper'
-> boltz_qdim(1)      = 20
-> boltz_qdim(2)      = 20
-> boltz_qdim(3)      = 20
-> hole               = .false.
-> band_min           = 5
-> band_max           = 5
-> boltz_emin         = 5.9             ! eV
-> boltz_emax         = 6.7             ! eV
-> boltz_de 	    = 1 	      ! meV
->/
->```
->
->Run post-processing calculation
->```bash
->perturbo.x -i pp.in | tee pp.out
->```
--->
+![Transient Absorption](https://github.com/perturbo-code/perturbo-workshop-2025/blob/main/Hands-on5/images/converged_trans_abs.png)
 
 ---
 >#### Initial populations at t = 0 as a defined distribution (no pump pulse)
