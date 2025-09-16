@@ -20,9 +20,12 @@ Here I will be using the serial with OpenMP Docker version of Perturbo, but you 
 
 ```bash
 # First, locate the /pw-ph-wann/scf/ directory
-cd /Hands-on3/GaAs_polar/pw-ph-wann/scf/
+cd Hands-on3/GaAs_polar/pw-ph-wann/scf/
 
-pw.x -in scf.in > scf.out
+# tee command is for writing outputs to screen
+pw.x -in scf.in | tee scf.out
+
+cp -r tmp ../ph/
 ```
 
 This performs a self-consistent field (SCF) calculation to obtain the equilibrium charge density for DFPT.
@@ -30,13 +33,15 @@ This performs a self-consistent field (SCF) calculation to obtain the equilibriu
 ### Step 2: Phonon Calculation with DFPT
 
 ```bash
-# Now we go to ../ph/
-cd /Hands-on3/GaAs_polar/pw-ph-wann/ph/
+# Now we go to "Hands-on3/GaAs_polar/pw-ph-wann/ph/"
+cd ../ph/
 
-ph.x -in ph.in > ph.out
+ph.x -in ph.in | tee ph.out
 
 # Collect the dfpt data to save/
-sh ph-collect.sh
+chmod +x ph-collect.sh
+
+./ph-collect.sh
 ```
 
 In this step, we calculate the phonon frequencies and eigenvectors using Density Functional Perturbation Theory.
@@ -46,10 +51,12 @@ In this step, we calculate the phonon frequencies and eigenvectors using Density
 ### Step 3: Non-self-consistent Calculation on Dense k-grid
 
 ```bash
-# Next, we go to the ../nscf/ directory to compute the WFs for Wannier90
-cd /Hands-on3/GaAs_polar/pw-ph-wann/nscf/
+# Next, we go to "Hands-on3/GaAs_polar/pw-ph-wann/nscf/" directory
+cd ../nscf/
 
-pw.x -in nscf.in > nscf.out
+cp -r ../scf/tmp .
+
+pw.x -in nscf.in | tee nscf.out
 ```
 
 This non-self-consistent calculation computes electronic states on a denser k-point grid needed for Wannierization. The dense grid ensures accurate interpolation of electronic properties when constructing Wannier functions.
@@ -58,14 +65,21 @@ This non-self-consistent calculation computes electronic states on a denser k-po
 - The full BZ grid must be provided to the input files. In this examples, we used the Wannier90's `kmesh.pl` utilities to generate the grid.
 - In the following Wannierization step, you also need to use the exact same grid.
 
-### Step 4: Wannierization Process
+### Step 4: Wannierization
+First, we link the previous `nscf/tmp/<prefix>.save` directory to the `wann`:
+```
+cd ../wann/
+
+mkdir tmp
+cd tmp && ln -s ../../nscf/tmp/gaas.save
+cd ../
+```
+Now we are ready to run Wannier90:
 
 ```bash
-wannier90-3.1.0/wannier90.x -pp gaas.win
-
-pw2wannier90.x -inp pw2wan.in > pw2wan.out
-
-wannier90-3.1.0/wannier90.x gaas.win
+wannier90.x -pp gaas.win
+pw2wannier90.x -inp pw2wan.in | tee pw2wan.out
+wannier90.x gaas.win
 ```
 
 - **First line**: Pre-processes to determine the required overlaps between Bloch states
@@ -73,16 +87,29 @@ wannier90-3.1.0/wannier90.x gaas.win
 - **Third line**: Performs the actual Wannierization, creating maximally localized Wannier functions and the transformation matrices needed for interpolation
 
 ### Step 5: Generate the EPR File
+In `qe2pert` directory, we link or copy the following QE and Wannier90 outputs:
+```bash
+cd ../../qe2pert/
+
+ln -s ../pw-ph-wann/wann/gaas_centres.xyz
+ln -s ../pw-ph-wann/wann/gaas_u.mat
+ln -s ../pw-ph-wann/wann/gaas_u_dis.mat
+
+# Also link the nscf WFs:
+mkdir tmp
+cd tmp/ && ln -s ../../pw-ph-wann/nscf/tmp/gaas.save
+cd ../
+```
+
 Run `qe2pert.x`:
 
 ```bash
-cd ./qe2pert
-qe2pert.x -in qe2pert.in > qe2pert.out
+qe2pert.x -in qe2pert.in | tee qe2pert.out
 ```
 or with in parallel with `mpirun`:
 
 ```bash
-mpirun -n 4 qe2pert.x -npools 4 -in qe2pert.in > qe2pert.out
+mpirun -n 4 qe2pert.x -npools 4 -in qe2pert.in | tee qe2pert.out
 ```
 
 This very crucial step reads:
@@ -100,19 +127,21 @@ Before running any calculations with `perturbo.x`, make sure link or copy the EP
 
 ```bash
 # Link the epr file to your working directory
-ln -sf /path/to/<prefix>_epr.h5 .
+ln -s /path/to/<prefix>_epr.h5 .
 
 # Then run perturbo
-perturbo.x -in pert.in > pert.out
+perturbo.x -in pert.in | tee pert.out
 ```
 or in parallel:
 
 ```bash
 # npools must be equal to ntasks
-mpirun -n 4 perturbo.x -npools 4 -in pert.in > pert.out
+mpirun -n 4 perturbo.x -npools 4 -in pert.in | tee pert.out
 ```
 
 With the `epr.h5` file ready, you can now perform various Perturbo calculations (band interpolation, transport, dynamics, etc.) by specifying different `calc_mode` options in the input file.
+
+We provided a sample post-processing `Python3` code using Perturbopy to plot the result in each folder.
 
 ## Special Note for Polar Materials
 
@@ -144,7 +173,7 @@ Pick either method A or B below that apply to you.
 ### Version A: If you only have `hdf5` (which is true if you are running Perturbocker):
 
 ```bash
-cd ./qtensor/qtensor-utils/
+cd Si_with_quadrupole/qtensor/qtensor-utils/
 
 # Compile the "qtensor_hdf5.f90" version using the h5fc wrapper:
 /opt/hdf5/bin/h5fc -o qtensor qtensor_hdf5.f90
@@ -159,7 +188,10 @@ cd ../
 
 ### Version B: If you know you have `h5fortran` library installed:
 Navigate to the `qtensor` folder and modify the `Makefile` to match your system configuration.
-
+```bash
+cd Si_with_quadrupole/qtensor/qtensor-utils/
+```
+Open `Makefile`:
 ```makefile
 # Change to gfortran/mpif90 depending on your HDF5
 FC = mpifort
@@ -178,7 +210,7 @@ make
 # Run qtensor in the same directory as your ABINIT output
 cd ../
 
-./qtensor
+./qtensor-utils/qtensor
 
 # Enter the file name (tlw_3.abo)
 ```
@@ -189,22 +221,22 @@ After this, you should obtain the file `qtensor.h5`. Now rename this file and co
 
 ```bash
 # Rename the file to match your calculation prefix
-mv qtensor.h5 <prefix>_qtensor.h5
+mv qtensor.h5 si_qtensor.h5
 
 # Copy to the directory where you'll run qe2pert.x
-cp <prefix>_qtensor.h5 /path/to/qe2pert/directory/
+cp si_qtensor.h5 ../qe2pert/
 ```
 
 ### Step 4: Generating EPR file
-Now, run `qe2pert.x` normally as above. The code will automatically detect this file and apply quadrupole correction to the eph calculations when generating the `epr.h5` file.
+Now, perform `QE` and `Wannier90`, then run `qe2pert.x` normally as above. The code will automatically detect `<prefix>_qtensor.h5` file and apply quadrupole correction to the eph calculations when generating the `epr.h5` file.
 
 ```bash
-qe2pert.x -in qe2pert.in > qe2pert.out
+qe2pert.x -in qe2pert.in | tee qe2pert.out
 ```
 
-You can verify that quadrupole corrections were applied by checking the `qe2pert.out` file for messages indicating that the quadrupole tensor file was successfully read and processed.
+You can verify that quadrupole corrections has been applied by checking the `qe2pert.out` file for messages indicating that the quadrupole tensor file was successfully read and processed.
 
-Done. You are now ready to perform subsequent `PERTURBO` calculations.
+Done! You are now ready to perform subsequent `PERTURBO` calculations.
 
 The quadrupole corrections are now embedded in the electron-phonon matrix elements and will automatically be included in all calculations of scattering rates, transport properties, and carrier dynamics.
 
