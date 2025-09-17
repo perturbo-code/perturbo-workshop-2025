@@ -105,7 +105,7 @@ The inputs can be found in the `pert-ephmat-spin` directory:
 cd perturbo-workshop-2025/Hands-on6/diamond/perturbo/pert-ephmat-spin
 ```
 
-We will now compute the absolute values of the spin-flip e-ph matrix elements, summed over the number of electronic bands, given two lists of **k**- and **q**-points. In a typical scenario, one computes the e-ph matrix elements for a chosen **k**-point as a function of **q**-point. In this example, we are computing the e-ph spin-flip matrix elements summed over the bands from 10 to 11.
+We will now compute the absolute values of the spin-flip e-ph matrix elements, summed over the number of electronic bands, given two lists of **k**- and **q**-points. In a typical scenario, one computes the e-ph matrix elements for a chosen **k**-point as a function of **q**-point. In this example, we are computing the e-ph spin-flip matrix elements summed over the bands from 9 to 10.
 
 Here is the input file (**pert.in**):
 
@@ -116,8 +116,8 @@ Here is the input file (**pert.in**):
  fklist = 'diam_band.kpt'
  fqlist = 'diam_band.qpt'
 
- band_min = 10
- band_max = 11
+ band_min = 9
+ band_max = 10
 
  phfreq_cutoff = 3          !meV
 /
@@ -261,8 +261,8 @@ Here is the input file (**pert.in**):
  fklist = 'diam_tet.kpt'     !kpt file from setup calculation
  ftemper = 'diam.temper'
 
- band_min = 10
- band_max = 11
+ band_min = 9
+ band_max = 10
 
  phfreq_cutoff = 3           ! meV !Phonon frequency cutoff
  delta_smear = 20            ! meV      !Smearing value
@@ -336,8 +336,8 @@ Here is the input file (**pert.in**):
 
  ftemper  = 'diam.temper'
 
- band_min = 10
- band_max = 11
+ band_min = 9
+ band_max = 10
 /
 ```
 
