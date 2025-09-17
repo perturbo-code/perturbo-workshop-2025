@@ -330,9 +330,9 @@ Here is the input file (**pert.in**):
  prefix = 'diam'
  calc_mode = 'spinlifetime'
   
- boltz_kdim(1) = 70
- boltz_kdim(2) = 70
- boltz_kdim(3) = 70
+ boltz_kdim(1) = 80
+ boltz_kdim(2) = 80
+ boltz_kdim(3) = 80
 
  ftemper  = 'diam.temper'
 
