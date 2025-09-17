@@ -1,7 +1,7 @@
 &qe2pert
   prefix='si'
   outdir='./tmp'
-  phdir='../pw-ph-wann/phonon/References/save'
+  phdir='../pw-ph-wann/ph/save'
   nk1=4, nk2=4, nk3=4
   dft_band_min = 1
   dft_band_max = 16
