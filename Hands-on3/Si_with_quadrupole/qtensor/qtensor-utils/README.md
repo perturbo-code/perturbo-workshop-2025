@@ -46,6 +46,13 @@ path for hdf5.mod headers and the `/path/to/your/hdf5/gcc/1.12.0/lib` directory 
    export INCLUDE=$HDF5_HOME/include:$INCLUDE
    
 ```
+
+## Updated version without H5Fortran library
+If you don't want to compile the extra H5Fortran library, simply compile the new version `qtensor_hdf5.f90` as follow:
+First, locate the `bin/` folder from `$H5_ROOT`, make sure there is the `h5fc` binary. Then, run:
+```bash
+h5fc -o qtensor qtensor_hdf5.f90
+```
     
 ## H5fortran Library
 
