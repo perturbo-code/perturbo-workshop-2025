@@ -2,7 +2,7 @@
 
 ## Introduction
 In general, the typical Perturbo workflow can be visualized as follow:
-<img width="1728" height="703" alt="image" src="https://github.com/user-attachments/assets/6f349399-d2fa-4648-a147-93d91679d2f2" />
+<img width="1000" height="800" alt="image" src="https://github.com/user-attachments/assets/6f349399-d2fa-4648-a147-93d91679d2f2" />
 
 After running QE and Wannier90, the next crucial step is generating the `epr.h5` file. This file contains the electron-phonon (e-ph) matrix elements on coarse Brillouin zone grids for both electrons (**k**-points) and phonons (**q**-points), represented in the Wannier function basis. The `qe2pert.x` interface program reads DFPT results from Quantum ESPRESSO and the unitary transformation matrices (*U* matrices) from Wannier90 to create this HDF5 format file for us.
 
@@ -148,9 +148,18 @@ or in parallel:
 mpirun -n 4 perturbo.x -npools 4 -in pert.in | tee pert.out
 ```
 
-With the `epr.h5` file ready, you can now perform various Perturbo calculations (band interpolation, transport, dynamics, etc.) by specifying different `calc_mode` options in the input file.
+With the `epr.h5` file, you can perform various Perturbo calculations (band interpolation, transport, dynamics, etc.) by specifying different `calc_mode` options in the input file.
 
-We provided a sample post-processing `Python3` code using Perturbopy to plot the result in each folder.
+As a demo, let us interpolate the el-ph matrix on a dense grid:
+```bash
+cd GaAs_polar/perturbo/pert-ephmat/
+perturbo.x -in pert.in | tee pert.out
+python3 plot_ephmat.py
+```
+Which would result in the following plot:
+<img width="800" height="600" alt="image" src="https://github.com/user-attachments/assets/c32af3f5-8bad-4990-93bb-91121d3c3534" />
+
+I also included other sample calculation modes in the same directory for you to explore later.
 
 ## Special Note for Polar Materials
 
