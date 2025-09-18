@@ -6,7 +6,7 @@ The following tutorial demonstrates the feature to simulate ultrafast carrier dy
 
 We compute the transient absorption signal during a pump-probe type experiment in GaAs. 
 
-For a typical pump-probe experiment, shortly a few tens of fs after the excitation, electrons can be described by a hot Fermi-Dirac distribution with a temperature of a few thousand degrees. But in this example, we will explicitly model how electron and hole dynamics contribute to the transient absorption signal.
+For a typical pump-probe experiment, shortly after a few tens of fs after the excitation, electrons can be described by a hot Fermi-Dirac distribution with a temperature of a few thousand degrees. But in this example, we will explicitly model how electron and hole occupations are generated via a pump pulse and the subsequent dynamics contributing to the transient absorption signal.
 
 From $t=0$, we simulate the pump pulse by computing the additional excited electron and hole populations at each time snapshot during the time of the pump. Then we time-evolve the dynamics of the electron and hole populations separately, where the excited populations are added during the pulse, then cooled in a phonon bath of 300 K. Phonon populations in this simulation are set to be time-independent. The carrier concentration is determined by the user-defined pump magnitude.
 

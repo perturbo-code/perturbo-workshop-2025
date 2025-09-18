@@ -61,7 +61,7 @@ The **si.temper** file contains information about temperature, chemical potentia
      300.00 6.5504824219 0.9945847E+18 0.0 0.0 0.0
 ```
 
-Create the soft link to the epr file **si_eph.h5**
+Create the soft link to the epr file **si_epr.h5**
 ``` bash
 ln -sf /home/user/run/workshop/perturbo-workshop-2025/Hands-on4/silicon/qe2pert/si_epr.h5
 ```
