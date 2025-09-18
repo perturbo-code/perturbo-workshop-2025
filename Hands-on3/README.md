@@ -174,6 +174,16 @@ By default, both contributions are computed and included in calculations like `i
 While standard electron-phonon calculations capture the monopole and dipole contributions to the interaction, certain materials require higher-order multipole corrections for accurate results. Quadrupole corrections become particularly important in materials with strong covalent bonding or when studying properties that are sensitive to the detailed shape of the electron-phonon coupling. These corrections account for the spatial variation of the electric field gradient produced by phonons, which can significantly affect carrier scattering rates in some semiconductors.
 
 ## Workflow for Quadrupole Corrections
+In this section, we will demonstrate how to add the quadrupole correction to the e-ph coupling matrices from first-principles.
+This is particularly necessary to piezoelectric (PE) e-ph interaction and long-range scattering mechanism due to acoustic phonons in noncentrosymmetric polar materials.
+
+For more information, see:
+* [Detailed theories by Miquel Royo and Massimiliano Stengel](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.11.041027)
+
+and also our publications:
+* [Theory of Quadrupole Correction to electron-phonon interactions (Si and PbTiO3)](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.125.136602)
+* [Applications to GaN](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.102.125203)
+
 
 ### Step 1: Perform Linear Response Calculations with ABINIT
 
@@ -260,11 +270,8 @@ Now, you are all set to perform subsequent `PERTURBO` calculations.
 
 The quadrupole corrections are now embedded in the el-ph matrix elements (the `epr.h5` file) and will automatically be included in all calculations of scattering rates, transport properties, and carrier dynamics.
 
-## Conclusion
+Below is the result comparing eph with and without QC from [our GaN paper](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.102.125203).
+We could see it is particularly important for the acoustic modes near the **q** = Γ point.
 
-The inclusion of quadrupole corrections can lead to:
-- More accurate carrier mobilities, especially at low temperatures where the detailed structure of the electron-phonon coupling matters most
-- Better agreement with experimental data for materials with strong covalent character
-- Improved description of hot carrier relaxation in ultrafast dynamics simulations
+<img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/5b47764b-9636-45ea-975e-3f6b4ee2b3e3" />
 
-These corrections are particularly important for materials like silicon, germanium, and III-V semiconductors where the quadrupole contribution can be comparable to the standard electron-phonon coupling in certain scattering channels.
