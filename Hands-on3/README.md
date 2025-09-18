@@ -177,6 +177,11 @@ While standard electron-phonon calculations capture the monopole and dipole cont
 In this section, we will demonstrate how to add the quadrupole correction to the e-ph coupling matrices from first-principles.
 This is particularly necessary to piezoelectric (PE) e-ph interaction and long-range scattering mechanism due to acoustic phonons in noncentrosymmetric polar materials.
 
+The quadrupole correction is computed as:
+<img width="1152" height="106" alt="image" src="https://github.com/user-attachments/assets/b1019be9-4241-46c4-8221-7fc522a65686" />
+
+where $Q_{\kappa,\alpha \beta \gamma}$ is the dynamical quadrupole tensor.
+
 For more information, see:
 * [Detailed theories by Miquel Royo and Massimiliano Stengel](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.11.041027)
 
