@@ -64,7 +64,9 @@ example07-sto-tdep-sscha/qe2pert-dfpt/qe2pert.in:1
   prefix       = 'sto-nosoc'
   outdir       = './tmp'
   phdir        = '../pw-ph-wann/phonon/save'
-  nk1 = 4; nk2 = 4; nk3 = 4
+  nk1 = 4
+  nk2 = 4
+  nk3 = 4
   num_wann     = 3
   dft_band_min = 21
   dft_band_max = 23
@@ -84,6 +86,7 @@ mkdir tmp
 cd tmp 
 ln -sf ../../pw-ph-wann/nscf/tmp/sto-nosoc.xml
 ln -sf ../../pw-ph-wann/nscf/tmp/sto-nosoc.save/
+cd ..
 
 # link Wannier matrices/centers if not already present
 ln -sf ../pw-ph-wann/wann/sto-nosoc_u.mat
@@ -137,6 +140,7 @@ mkdir tmp
 cd tmp 
 ln -sf ../../pw-ph-wann/nscf/tmp/sto-nosoc.xml
 ln -sf ../../pw-ph-wann/nscf/tmp/sto-nosoc.save/
+cd ..
 
 # link Wannier matrices/centers if not already present
 ln -sf ../pw-ph-wann/wann/sto-nosoc_u.mat
@@ -194,6 +198,7 @@ mkdir tmp
 cd tmp 
 ln -sf ../../pw-ph-wann/nscf/tmp/sto-nosoc.xml
 ln -sf ../../pw-ph-wann/nscf/tmp/sto-nosoc.save/
+cd ..
 
 # link Wannier matrices/centers if not already present
 ln -sf ../pw-ph-wann/wann/sto-nosoc_u.mat
